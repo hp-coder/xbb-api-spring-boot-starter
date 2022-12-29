@@ -5,15 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.sdk.customer.CustomerApi;
 import com.luban.xbongbong.api.sdk.form.FormApi;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author HP 2022/12/28
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = XbbApiAutoConfiguration.class)
 public class ApiTest {
 
