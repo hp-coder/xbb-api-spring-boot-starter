@@ -3,7 +3,7 @@ package com.luban.xbongbong.api.helper.exception;
 /**
  * 销帮帮接口异常
  */
-public class XbbException extends Exception {
+public class XbbException extends RuntimeException {
 
 	private static final long serialVersionUID = 3794250441365105227L;
 

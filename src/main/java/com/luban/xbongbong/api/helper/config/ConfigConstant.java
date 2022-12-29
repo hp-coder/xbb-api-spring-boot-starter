@@ -7,13 +7,17 @@ import com.luban.xbongbong.api.helper.utils.HttpRequestUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
  * 销帮帮接口全局配置与常量
+ *
+ * @author hp
  */
+@Slf4j
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "xbb")
@@ -138,6 +142,7 @@ public class ConfigConstant implements SmartInitializingSingleton {
      * @return 接口回参
      */
     public static String xbbApi(String url, JSONObject data) throws XbbException {
+        log.debug("Xbb API Request Payload: {}", data.toJSONString());
         String absoluteUrl = ConfigConstant.getApiUrl(url);
         //签名规则:将访问接口所需的参数集data + token字符串拼接后进行SHA256运算得到最后的签名,然后将签名参数sign(参数名为sign)放入http header中;
         // 			将访问接口所需的参数集data(参数名为data)放入http body。

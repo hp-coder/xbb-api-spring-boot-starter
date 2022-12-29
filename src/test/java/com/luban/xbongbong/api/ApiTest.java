@@ -2,30 +2,29 @@ package com.luban.xbongbong.api;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.luban.xbongbong.api.helper.enums.XbbFormBizType;
+import com.luban.xbongbong.api.helper.enums.XbbFormType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
-import com.luban.xbongbong.api.sdk.customer.CustomerApi;
-import com.luban.xbongbong.api.sdk.form.FormApi;
+import com.luban.xbongbong.api.sdk.customer.XbbCustomerApi;
+import com.luban.xbongbong.api.sdk.form.XbbFormApi;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author HP 2022/12/28
  */
-@SpringBootTest(classes = XbbApiAutoConfiguration.class)
 public class ApiTest {
 
     @Test
-    public void test_customer_get(){
-        JSONArray formList = getFormList(null, 1, 100, 1, 100);
+    public void test_customer_get() {
+        JSONArray formList = getFormList(null, XbbFormType.SYSTEM, XbbFormBizType.客户, 1, 100);
         System.out.println(formList.toJSONString());
 
-//        // 表单id，根据表单模板列表接口查出
-//        Long formId = 7174754L;
-//
-//        //获取字段解释-formId根据表单模板列表接口回参中获取
-//        JSONArray explainList = getExplainList(formId, 100);
-//        System.out.println(explainList.toJSONString());
+        // 表单id，根据表单模板列表接口查出
+        Long formId = 7174754L;
+
+        //获取字段解释-formId根据表单模板列表接口回参中获取
+        JSONArray explainList = getExplainList(formId);
+        System.out.println(explainList.toJSONString());
 //
 //        //获取客户列表-formId根据表单模板列表接口回参中获取
 //        JSONArray customerList = getCustomerList(formId,  1, 10);
@@ -66,15 +65,16 @@ public class ApiTest {
 
     /**
      * 获取表单模版列表
-     * @param name 模版名称模糊查询
+     *
+     * @param name         模版名称模糊查询
      * @param businessType 业务类型
-     * @param page 页码
-     * @param pageNum 每页数
+     * @param page         页码
+     * @param pageNum      每页数
      * @return 接口回参
      */
-    static JSONArray getFormList(String name, Integer saasMark, Integer businessType, Integer page, Integer pageNum){
+    static JSONArray getFormList(String name, XbbFormType saasMark, XbbFormBizType businessType, Integer page, Integer pageNum) {
         try {
-            JSONArray formList = FormApi.list(name, saasMark, businessType, page, pageNum);
+            JSONArray formList = XbbFormApi.list(name, saasMark, businessType, page, pageNum);
             return formList;
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,13 +84,13 @@ public class ApiTest {
 
     /**
      * 获取表单解释
-     * @param formId 表单id
-     * @param businessType 业务类型
+     *
+     * @param formId       表单id
      * @return 接口回参-字段解释
      */
-    static JSONArray getExplainList(Long formId, Integer businessType) {
+    static JSONArray getExplainList(Long formId) {
         try {
-            JSONArray explainList = FormApi.get(formId, businessType);
+            JSONArray explainList = XbbFormApi.get(formId);
             return explainList;
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,14 +100,15 @@ public class ApiTest {
 
     /**
      * 获取客户列表
-     * @param formId 表单id
-     * @param page 页码
+     *
+     * @param formId  表单id
+     * @param page    页码
      * @param pageNum 每页数据量
      * @return 接口回参-客户列表
      */
     static JSONArray getCustomerList(Long formId, Integer page, Integer pageNum) {
         try {
-            JSONArray customerList = CustomerApi.list(formId,  page, pageNum);
+            JSONArray customerList = XbbCustomerApi.list(formId, page, pageNum);
             return customerList;
         } catch (Exception e) {
             e.printStackTrace();
@@ -117,13 +118,14 @@ public class ApiTest {
 
     /**
      * 新建客户
-     * @param formId 表单id
+     *
+     * @param formId   表单id
      * @param dataList 客户数据
      * @return 接口回参
      */
     static Long customerAdd(Long formId, JSONObject dataList) {
         try {
-            Long dataId = CustomerApi.add(formId, dataList);
+            Long dataId = XbbCustomerApi.add(formId, dataList);
             return dataId;
         } catch (XbbException e) {
             e.printStackTrace();
@@ -131,9 +133,9 @@ public class ApiTest {
         return 0L;
     }
 
-    static JSONObject customerGet(Long dataId){
+    static JSONObject customerGet(Long dataId) {
         try {
-            return CustomerApi.get(dataId);
+            return XbbCustomerApi.get(dataId);
         } catch (Exception e) {
             e.printStackTrace();
         }

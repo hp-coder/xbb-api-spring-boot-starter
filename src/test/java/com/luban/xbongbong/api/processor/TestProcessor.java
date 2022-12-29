@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.luban.xbongbong.api.helper.enums.XbbBizType;
 import com.luban.xbongbong.api.helper.enums.XbbOperateType;
 import com.luban.xbongbong.api.model.WebhookPayload;
-import com.luban.xbongbong.api.sdk.customer.CustomerApi;
+import com.luban.xbongbong.api.sdk.customer.XbbCustomerApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ public class TestProcessor implements XbbWebhookEventProcessor {
     public Consumer<WebhookPayload> process() {
         return payload -> {
             try {
-                final JSONObject object = CustomerApi.get(payload.getDataId());
+                final JSONObject object = XbbCustomerApi.get(payload.getDataId());
                 final JSONObject data = object.getJSONObject("data");
                 final Integer num_3 = data.getInteger("num_3");
                 final boolean undistributed = Objects.equals(1, num_3);
