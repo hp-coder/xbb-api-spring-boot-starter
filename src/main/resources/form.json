@@ -1,0 +1,862 @@
+{
+  "code": 1,
+  "msg": "操作成功",
+  "result": {
+    "explainList": [
+      {
+        "attr": "text_1",
+        "attrName": "客户名称",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 1,
+        "items": [],
+        "noRepeat": 1,
+        "required": 1,
+        "showType": 0
+      },
+      {
+        "attr": "text_12",
+        "attrName": "主联系人名称",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 1,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 2
+      },
+      {
+        "attr": "subForm_2",
+        "attrName": "主联系人电话",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 20003,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 2,
+        "subFieldList": [
+          {
+            "attr": "text_1",
+            "attrName": "类型",
+            "comboType": 0,
+            "dateType": "yyyy-MM-dd HH:mm",
+            "fieldType": 3,
+            "items": [
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "工作",
+                "value": 1
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "手机",
+                "value": 2
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "住址",
+                "value": 3
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "主要",
+                "value": 4
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "传真",
+                "value": 5
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "其他",
+                "value": 6
+              }
+            ],
+            "noRepeat": 0,
+            "required": 1,
+            "showType": 1
+          },
+          {
+            "attr": "text_2",
+            "attrName": "电话",
+            "comboType": 0,
+            "dateType": "yyyy-MM-dd HH:mm",
+            "fieldType": 1,
+            "noRepeat": 1,
+            "required": 0,
+            "showType": 1
+          }
+        ]
+      },
+      {
+        "attr": "text_17",
+        "attrName": "上级客户",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 20001,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_2",
+        "attrName": "客户简称",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 1,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "subForm_1",
+        "attrName": "客户电话",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 20003,
+        "items": [],
+        "noRepeat": 0,
+        "required": 1,
+        "showType": 0,
+        "subFieldList": [
+          {
+            "attr": "text_1",
+            "attrName": "类型",
+            "comboType": 0,
+            "dateType": "yyyy-MM-dd HH:mm",
+            "fieldType": 3,
+            "items": [
+              {
+                "checked": true,
+                "isOther": 0,
+                "text": "工作",
+                "value": "1"
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "手机",
+                "value": "2"
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "住址",
+                "value": "3"
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "主要",
+                "value": "4"
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "传真",
+                "value": "5"
+              },
+              {
+                "checked": false,
+                "isOther": 0,
+                "text": "其他",
+                "value": "6"
+              }
+            ],
+            "noRepeat": 0,
+            "required": 1,
+            "showType": 0
+          },
+          {
+            "attr": "text_2",
+            "attrName": "电话",
+            "comboType": 0,
+            "dateType": "yyyy-MM-dd HH:mm",
+            "fieldType": 1,
+            "noRepeat": 1,
+            "required": 1,
+            "showType": 0
+          }
+        ]
+      },
+      {
+        "attr": "address_1",
+        "attrName": "客户地址",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 12,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_4",
+        "attrName": "客户状态",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 3,
+        "items": [
+          {
+            "isOther": 0,
+            "text": "潜在客户",
+            "value": "1"
+          },
+          {
+            "isOther": 0,
+            "text": "初步接触",
+            "value": "2"
+          },
+          {
+            "isOther": 0,
+            "text": "持续跟进",
+            "value": "3"
+          },
+          {
+            "isOther": 0,
+            "noDel": 1,
+            "noEdit": 1,
+            "text": "成交客户",
+            "value": "4"
+          },
+          {
+            "isOther": 0,
+            "noDel": 1,
+            "noEdit": 1,
+            "text": "忠诚客户",
+            "value": "5"
+          },
+          {
+            "isOther": 0,
+            "noDel": 1,
+            "noEdit": 1,
+            "text": "无效客户",
+            "value": "6"
+          }
+        ],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_18",
+        "attrName": "客户阶段",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 10030,
+        "items": [
+          {
+            "allowSkipStage": 0,
+            "isOther": 0,
+            "stageId": 2387582,
+            "stageProcessId": 492723,
+            "stageRatio": 0,
+            "stageType": 0,
+            "text": "发现需求",
+            "value": "1"
+          },
+          {
+            "allowSkipStage": 0,
+            "isOther": 0,
+            "stageId": 2387583,
+            "stageProcessId": 492723,
+            "stageRatio": 0,
+            "stageType": 0,
+            "text": "确认需求",
+            "value": "2"
+          },
+          {
+            "allowSkipStage": 0,
+            "isOther": 0,
+            "stageId": 2387584,
+            "stageProcessId": 492723,
+            "stageRatio": 0,
+            "stageType": 0,
+            "text": "解决方案",
+            "value": "3"
+          },
+          {
+            "allowSkipStage": 0,
+            "isOther": 0,
+            "stageId": 2387585,
+            "stageProcessId": 492723,
+            "stageRatio": 0,
+            "stageType": 0,
+            "text": "商务谈判",
+            "value": "4"
+          },
+          {
+            "allowSkipStage": 0,
+            "isOther": 0,
+            "stageId": 2387586,
+            "stageProcessId": 492723,
+            "stageRatio": 0,
+            "stageType": 0,
+            "text": "招投标",
+            "value": "5"
+          },
+          {
+            "allowSkipStage": 0,
+            "isOther": 0,
+            "stageId": 2387587,
+            "stageProcessId": 492723,
+            "stageRatio": 0,
+            "stageType": 1,
+            "text": "成交",
+            "value": "6"
+          },
+          {
+            "allowSkipStage": 0,
+            "isOther": 0,
+            "stageId": 2387588,
+            "stageProcessId": 492723,
+            "stageRatio": 0,
+            "stageType": 2,
+            "text": "流失",
+            "value": "7"
+          }
+        ],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 10
+      },
+      {
+        "attr": "ownerId",
+        "attrName": "负责人",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 10017,
+        "items": [],
+        "multiple": 1,
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 10
+      },
+      {
+        "attr": "coUserId",
+        "attrName": "协同人",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 10018,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 10
+      },
+      {
+        "attr": "text_3",
+        "attrName": "客户类型",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 3,
+        "items": [
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "最终客户",
+            "value": "1"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "渠道客户",
+            "value": "2"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "竞争对手",
+            "value": "3"
+          }
+        ],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_5",
+        "attrName": "客户性质",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 3,
+        "items": [
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "企业客户",
+            "value": "1"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "个人客户",
+            "value": "2"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "政府事业单位",
+            "value": "3"
+          }
+        ],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_6",
+        "attrName": "客户分级",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 3,
+        "items": [
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "大型",
+            "value": "1"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "中型",
+            "value": "2"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "小型",
+            "value": "3"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "微型",
+            "value": "4"
+          }
+        ],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_7",
+        "attrName": "客户行业",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 3,
+        "items": [
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "金融",
+            "value": "1"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "电信",
+            "value": "2"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "教育",
+            "value": "3"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "高科技",
+            "value": "4"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "政府",
+            "value": "5"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "制造业",
+            "value": "6"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "服务业",
+            "value": "7"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "能源",
+            "value": "8"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "零售",
+            "value": "9"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "媒体",
+            "value": "10"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "娱乐",
+            "value": "11"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "咨询",
+            "value": "12"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "非营利事业",
+            "value": "13"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "公用事业",
+            "value": "14"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "其他",
+            "value": "15"
+          }
+        ],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "num_1",
+        "attrName": "重要程度",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 10,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_9",
+        "attrName": "客户来源",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 3,
+        "items": [
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "网络推广",
+            "value": "1"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "电话销售",
+            "value": "2"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "渠道代理",
+            "value": "3"
+          }
+        ],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_10",
+        "attrName": "客户官网",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 1,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_11",
+        "attrName": "客户简介",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 1,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "array_31",
+        "attrName": "标签",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 800000,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 6
+      },
+      {
+        "attr": "text_8",
+        "attrName": "国家",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 3,
+        "items": [
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "中国",
+            "value": "1"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "美国",
+            "value": "2"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "澳大利亚",
+            "value": "3"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "巴西",
+            "value": "4"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "英国",
+            "value": "5"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "加拿大",
+            "value": "6"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "日本",
+            "value": "7"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "德国",
+            "value": "8"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "希腊",
+            "value": "9"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "瑞士",
+            "value": "10"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "新西兰",
+            "value": "11"
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "意大利",
+            "value": "12"
+          }
+        ],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "file_1",
+        "attrName": "图片",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 6,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "file_2",
+        "attrName": "文件",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 8,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_13",
+        "attrName": "备注",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 7,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "text_16",
+        "attrName": "创建人",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 10009,
+        "items": [],
+        "noRepeat": 0,
+        "required": 1,
+        "showType": 0
+      },
+      {
+        "attr": "addTime",
+        "attrName": "创建时间",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 10014,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 6
+      },
+      {
+        "attr": "updateTime",
+        "attrName": "更新时间",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 10015,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 6
+      },
+      {
+        "attr": "date_2",
+        "attrName": "最后跟进时间",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 4,
+        "items": [],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 0
+      },
+      {
+        "attr": "date_3",
+        "attrName": "公海退回时间",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 4,
+        "items": [],
+        "noRepeat": 0,
+        "required": 1,
+        "showType": 2
+      },
+      {
+        "attr": "date_4",
+        "attrName": "分配时间",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 4,
+        "items": [],
+        "noRepeat": 0,
+        "required": 1,
+        "showType": 2
+      },
+      {
+        "attr": "num_3",
+        "attrName": "是否公海",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 19,
+        "items": [
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "非公海客户",
+            "value": 0
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "公海客户",
+            "value": 1
+          }
+        ],
+        "noRepeat": 0,
+        "required": 1,
+        "showType": 6
+      },
+      {
+        "attr": "num_4",
+        "attrName": "是否归档",
+        "comboType": 0,
+        "dateType": "yyyy-MM-dd HH:mm",
+        "fieldType": 19,
+        "items": [
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "归档",
+            "value": 1
+          },
+          {
+            "checked": false,
+            "isOther": 0,
+            "text": "未归档",
+            "value": 2
+          }
+        ],
+        "noRepeat": 0,
+        "required": 0,
+        "showType": 6
+      }
+    ]
+  },
+  "success": true
+}
