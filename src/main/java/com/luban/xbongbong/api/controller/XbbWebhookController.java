@@ -5,6 +5,7 @@ import com.luban.xbongbong.api.model.WebhookPayload;
 import com.luban.xbongbong.api.processor.XbbWebhookEventProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.ExecutorService;
  */
 @Slf4j
 @RestController
+@ConditionalOnProperty(prefix = "xbb", name = {"token", "gateway", "corp-id", "user-id", "webhook-token"})
 @RequiredArgsConstructor
 @RequestMapping("/xbb/webhook")
 public class XbbWebhookController {

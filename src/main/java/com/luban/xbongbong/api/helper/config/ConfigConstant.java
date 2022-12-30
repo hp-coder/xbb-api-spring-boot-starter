@@ -64,43 +64,79 @@ public class ConfigConstant implements SmartInitializingSingleton {
     public static String USER_ID;
 
     /* ---------------------------------------------表单模块接口地址------------------------------------------------*/
-    /**
-     * 表单模板列表接口
-     */
-    public static final String FORM_LIST = "/pro/v2/api/form/list";
 
-    /**
-     * 表单模板字段解释接口
-     */
-    public static final String FORM_GET = "/pro/v2/api/form/get";
+    public enum FORM {
+        ;
+        /**
+         * 表单模板列表接口
+         */
+        public static final String LIST = "/pro/v2/api/form/list";
+
+        /**
+         * 表单模板字段解释接口
+         */
+        public static final String GET = "/pro/v2/api/form/get";
+
+    }
+
 
 
     /* ---------------------------------------------客户模块接口地址------------------------------------------------*/
-    /**
-     * 客户列表接口
-     */
-    public static final String CUSTOMER_LIST = "/pro/v2/api/customer/list";
 
-    /**
-     * 客户新建接口
-     */
-    public static final String CUSTOMER_ADD = "/pro/v2/api/customer/add";
+    public enum  CUSTOMER {
+        ;
+        /**
+         * 客户列表接口
+         */
+        public static final String LIST = "/pro/v2/api/customer/list";
 
-    /**
-     * 客户分配接口*
-     */
-    public static final String CUSTOMER_DISTRIBUTION = "/pro/v2/api/customer/distribution";
+        /**
+         * 客户新建接口
+         */
+        public static final String ADD = "/pro/v2/api/customer/add";
 
-    /**
-     * 客户详情*
-     */
-    public static final String CUSTOMER_GET = "/pro/v2/api/customer/detail";
+        /**
+         * 客户分配接口*
+         */
+        public static final String DISTRIBUTION = "/pro/v2/api/customer/distribution";
+
+        /**
+         * 客户详情*
+         */
+        public static final String GET = "/pro/v2/api/customer/detail";
+
+        /**
+         * 客户退回公海池*
+         */
+        public static final String BACK_TO_PUBLIC_SEA = "/pro/v2/api/customer/back";
+
+        /**
+         * 删除客户负责人*
+         */
+        public static final String OWNER_REMOVE = "/pro/v2/api/customer/deleteMainUser";
+
+        /**
+         * 客户移交*
+         */
+        public static final String HANDOVER = "/pro/v2/api/customer/handover";
+
+        /**
+         * 删除客户*
+         */
+        public static final String DELETE = "/pro/v2/api/customer/del";
+
+    }
 
     /* ---------------------------------------------用户模块接口地址------------------------------------------------*/
-    /**
-     * 用户列表（钉钉用户)*
-     */
-    public static final String USER_LIST = "/pro/v2/api/user/list";
+
+    public enum USER{
+        ;
+        /**
+         * 用户列表（钉钉用户)*
+         */
+        public static final String LIST = "/pro/v2/api/user/list";
+
+    }
 
     /**
      * 获取接口地址

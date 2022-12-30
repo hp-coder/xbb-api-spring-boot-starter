@@ -1,16 +1,18 @@
 package com.luban.xbongbong.api.sdk.user;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.model.DingTalkUser;
+import com.luban.xbongbong.api.model.XbbResponse;
+import com.luban.xbongbong.api.model.user.XbbUserListResponse;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author HP 2022/12/28
@@ -28,37 +30,34 @@ public class XbbUserApi {
      * @return
      * @throws Exception
      */
-    public static List<DingTalkUser> list(String nameLike, List<String> userIdIn, boolean delIgnore, int page, int pageSize) throws Exception {
+    public static List<DingTalkUser> list(String nameLike, List<String> userIdIn, Boolean delIgnore, Integer page, Integer pageSize) throws Exception {
         //创建参数data
         JSONObject data = new JSONObject();
-        Optional.ofNullable(nameLike).ifPresent(_0 -> data.put("nameLike", nameLike));
-        Optional.ofNullable(userIdIn).ifPresent(_0 -> data.put("userIdIn", userIdIn));
-        data.put("delIgnore", delIgnore ? 1 : 0);
-        data.put("page", page);
-        data.put("pageSize", pageSize);
         data.put("corpid", ConfigConstant.CORP_ID);
         data.put("userId", ConfigConstant.USER_ID);
+        Optional.ofNullable(delIgnore).ifPresent(_0 -> data.put("delIgnore", _0 ? 1 : 0));
+        Optional.ofNullable(nameLike).ifPresent(_0 -> data.put("nameLike", _0));
+        Optional.ofNullable(userIdIn).ifPresent(_0 -> data.put("userIdIn", _0));
+        Optional.ofNullable(page).ifPresent(_0 -> data.put("page", _0));
+        Optional.ofNullable(pageSize).ifPresent(_0 -> data.put("pageSize", _0));
         //调用xbbApi方法，发起接口请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.USER_LIST, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.USER.LIST, data);
         //对返回值进行解析
-        JSONObject responseJson;
+        XbbResponse<XbbUserListResponse> xbbResponse;
         try {
-            responseJson = JSON.parseObject(response);
+            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbUserListResponse>>() {
+            });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);
         }
-        if (responseJson.containsKey("code") && responseJson.getInteger("code").equals(1)) {
-            JSONObject result = responseJson.getJSONObject("result");
+        if (Objects.equals(xbbResponse.getCode(), 1)) {
+            final XbbUserListResponse result = xbbResponse.getResult();
             if (result == null) {
                 return Collections.emptyList();
             }
-            JSONArray retArray = result.getJSONArray("userList");
-            return retArray
-                    .stream()
-                    .map(i -> JSONObject.parseObject(JSONObject.toJSONString(i), DingTalkUser.class))
-                    .collect(Collectors.toList());
+            return result.getUserList();
         } else {
-            throw new Exception(responseJson.getString("msg"));
+            throw new Exception(xbbResponse.getMsg());
         }
     }
 
