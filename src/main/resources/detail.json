@@ -1,44 +1,38 @@
 {
-  "formId": 7174754,
-  "addTime": 1671781277,
+  "addTime": 1672366003,
   "data": {
+    "date_2": 1672370574,
     "text_18": "",
-    "address_1": {
-      "address": "",
-      "province": "",
-      "city": "",
-      "district": ""
-    },
-    "text_1": "阿里-测试",
-    "file_2": [],
+    "text_1": "hupeng",
+    "subForm_1": [
+      {
+        "text_1": {
+          "color": "#646566",
+          "checked": true,
+          "text": "主要",
+          "value": "4"
+        },
+        "text_2": "130123123123"
+      }
+    ],
     "text_16": {
-      "name": "陈敏",
-      "avatar": "https://static-legacy.dingtalk.com/media/lADPDhmOtVGQeljNAoDNAoA_640_640.jpg",
-      "id": "01334246651218567"
+      "name": "xxxx",
+      "avatar": "https://static-legacy.dingtalk.com/media/xxxxx.png",
+      "id": "283xxxxxx10"
     },
     "coUserId": [],
     "ownerId": [
       {
-
-
-      }
-    ],
-    "date_2": 1672143660,
-    "array_31": [],
-    "subForm_1": [
-      {
-        "text_1": {
-          "checked": true,
-          "text": "工作",
-          "value": "1"
-        },
-        "text_2": "15338719673"
+        "name": "xxxx",
+        "avatar": "https://static-legacy.dingtalk.com/media/xxxxx.png",
+        "id": "2836xxxx10"
       }
     ],
     "num_1": 0,
     "num_3": 0,
     "num_4": 2
   },
-  "dataId": 106037143,
-  "updateTime": 1672143762
+  "dataId": 106324454,
+  "formId": 7174754,
+  "updateTime": 1672370603
 }
