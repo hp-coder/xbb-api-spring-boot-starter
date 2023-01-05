@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
+import com.luban.xbongbong.api.helper.enums.XbbFormConditionSymbol;
 import com.luban.xbongbong.api.helper.enums.XbbSubBusinessType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.XbbFormCondition;
@@ -12,7 +13,9 @@ import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.customer.*;
 import lombok.NonNull;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -47,6 +50,27 @@ public class XbbCustomerApi {
         } else {
             throw new Exception(xbbResponse.getMsg());
         }
+    }
+
+    /**
+     * 通过系统的用户ID来查询 *
+     *
+     * @param userId
+     * @return 客户数据，具体字段参考 resources/detail.json
+     * @throws Exception
+     */
+    public static XbbCustomerDetailResponse getByUserId(@NonNull Long formId, @NonNull String userIdField, @NonNull Long userId) throws Exception {
+        final XbbFormCondition xbbFormCondition = new XbbFormCondition();
+        xbbFormCondition.setAttr(userIdField);
+        xbbFormCondition.setSymbol(XbbFormConditionSymbol.eq);
+        xbbFormCondition.setValue(Collections.singletonList(userId));
+        final JSONArray list = list(formId, Collections.singletonList(xbbFormCondition), null, null, 1, 1);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        }
+        final JSONObject object = JSONObject.parseObject(JSON.toJSONString(list.get(0)));
+        final Long dataId = object.getLong("dataId");
+        return get(dataId);
     }
 
     /**
