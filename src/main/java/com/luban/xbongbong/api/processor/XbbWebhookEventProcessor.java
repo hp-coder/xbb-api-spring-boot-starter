@@ -19,9 +19,6 @@ public interface XbbWebhookEventProcessor extends SmartInitializingSingleton {
 
     Predicate<WebhookPayload> proceed();
 
-    /**
-     * 自动注册上下文*
-     */
     @Override
     default void afterSingletonsInstantiated() {
         PROCESSORS.add(this);

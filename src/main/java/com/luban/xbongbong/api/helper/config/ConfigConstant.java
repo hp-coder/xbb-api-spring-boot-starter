@@ -63,8 +63,9 @@ public class ConfigConstant implements SmartInitializingSingleton {
     @NonNull
     public static String USER_ID;
 
-    /* ---------------------------------------------表单模块接口地址------------------------------------------------*/
-
+    /**
+     * 表单模块接口地址
+     */
     public enum FORM {
         ;
         /**
@@ -80,10 +81,10 @@ public class ConfigConstant implements SmartInitializingSingleton {
     }
 
 
-
-    /* ---------------------------------------------客户模块接口地址------------------------------------------------*/
-
-    public enum  CUSTOMER {
+    /**
+     * 客户模块接口地址*
+     */
+    public enum CUSTOMER {
         ;
         /**
          * 客户列表接口
@@ -127,15 +128,31 @@ public class ConfigConstant implements SmartInitializingSingleton {
 
     }
 
-    /* ---------------------------------------------用户模块接口地址------------------------------------------------*/
-
-    public enum USER{
+    /**
+     * 用户模块接口地址*
+     */
+    public enum USER {
         ;
         /**
          * 用户列表（钉钉用户)*
          */
         public static final String LIST = "/pro/v2/api/user/list";
 
+    }
+
+    /**
+     * 自定义表单*
+     */
+    public enum CUSTOM_FORM {
+        ;
+        /**
+         * 添加自定义表单的数据*
+         */
+        public static final String ADD = "/pro/v2/api/paas/add";
+        /**
+         * 删除*
+         */
+        public static final String DELETE = "/pro/v2/api/paas/del";
     }
 
     /**
