@@ -2,11 +2,31 @@
 
 销帮帮CRM系统API及业务API
 
-## 使用
-springboot配置文件中增加配置, 具体参数可以通过https://pfweb.xbongbong.com/#/apiToken/index等获取
+`说明：由于销帮帮的关联表单并非通过关联键查询子表单数据，而是通过主键（销帮帮客户记录ID）关联，也就是说主表的记录只能是1，字表是多，无法实现多对多的场景`
 
-### 必须配置
-详情参考配置类说明: `com.luban.xbongbong.api.biz.config.XbbBizConfig`
+## 使用
+获取项目并安装
+```shell
+git clone http://47.106.251.114:3000/hup/xbb-api-spring-boot-starter
+cd xbb-api-spring-boot-starter
+mvn clean install
+```
+引入Maven坐标
+```xml
+<dependency>
+    <groupId>com.luban</groupId>
+    <artifactId>xbb-api-spring-boot-starter</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+### Springboot配置
+详情参考配置类说明: 
+- 系统配置
+`com.luban.xbongbong.api.helper.config.ConfigConstant`
+- 业务配置
+`com.luban.xbongbong.api.biz.config.XbbBizConfig`
+
+配置文件添加
 ```yaml
 xbb:
   gateway: https://proapi.xbongbong.com
@@ -31,8 +51,7 @@ xbb:
 ### BIZ API
 系统业务API
 
-`说明：由于销帮帮的关联表单并非通过关联键查询子表单数据，而是通过主键（销帮帮客户记录ID）关联，也就是说主表的记录只能是1，字表是多，无法实现多对多的场景`
-
+接口：`com.luban.xbongbong.api.biz.XbbLubanBizApi`
 - 通过qyId获取销帮帮客户id
 - 添加一条开标记录
 - 添加一条中标记录 
