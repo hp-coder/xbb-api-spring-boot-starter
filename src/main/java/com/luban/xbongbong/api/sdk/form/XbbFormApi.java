@@ -32,29 +32,27 @@ public class XbbFormApi {
         //创建请求参数data
         JSONObject data = new JSONObject();
         data.put("saasMark", formType.getCode());
-        data.put("corpid", ConfigConstant.CORP_ID);
-        data.put("userId", ConfigConstant.USER_ID);
         Optional.ofNullable(name).ifPresent(_0 -> data.put("name", _0));
         Optional.ofNullable(businessType).ifPresent(_0 -> data.put("businessType", _0.getCode()));
         //调用xbbApi方法，发起API请求
         String response = ConfigConstant.xbbApi(ConfigConstant.FORM.LIST, data);
         //对返回值进行解析
-        XbbResponse<XbbFormListResponse> xbbresponse;
+        XbbResponse<XbbFormListResponse> xbbResponse;
         try {
-            xbbresponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbFormListResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbFormListResponse>>() {
             });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);
         }
         List<XbbFormListResponse.FormList> retArray = null;
-        if (Objects.equals(xbbresponse.getCode(), 1)) {
-            final XbbFormListResponse result = xbbresponse.getResult();
+        if (Objects.equals(xbbResponse.getCode(), 1)) {
+            final XbbFormListResponse result = xbbResponse.getResult();
             if (result != null) {
                 retArray = result.getFormList();
             }
             return retArray;
         } else {
-            throw new Exception(xbbresponse.getMsg());
+            throw new Exception(xbbResponse.getMsg());
         }
     }
 
@@ -69,8 +67,6 @@ public class XbbFormApi {
         //创建请求参数data
         JSONObject data = new JSONObject();
         data.put("formId", formId);
-        data.put("corpid", ConfigConstant.CORP_ID);
-        data.put("userId", ConfigConstant.USER_ID);
         //调用xbbApi方法， 发起API请求
         String response = ConfigConstant.xbbApi(ConfigConstant.FORM.GET, data);
         //对返回值进行解析

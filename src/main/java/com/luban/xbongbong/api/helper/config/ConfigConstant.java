@@ -126,6 +126,11 @@ public class ConfigConstant implements SmartInitializingSingleton {
          */
         public static final String DELETE = "/pro/v2/api/customer/del";
 
+        /**
+         * 编辑用户*
+         */
+        public static final String EDIT = "/pro/v2/api/customer/edit";
+
     }
 
     /**
@@ -150,9 +155,23 @@ public class ConfigConstant implements SmartInitializingSingleton {
          */
         public static final String ADD = "/pro/v2/api/paas/add";
         /**
-         * 删除*
+         * 删除自定义表单的数据*
          */
         public static final String DELETE = "/pro/v2/api/paas/del";
+        /**
+         * 自定义表单的数据列表*
+         */
+        public static final String LIST = "/pro/v2/api/paas/list";
+
+        /**
+         * 编辑自定义表单的数据*
+         */
+        public static final String EDIT = "/pro/v2/api/paas/edit";
+
+        /**
+         * 自定义表单的数据详情*
+         */
+        public static final String GET = "/pro/v2/api/paas/detail";
     }
 
     /**
@@ -200,6 +219,8 @@ public class ConfigConstant implements SmartInitializingSingleton {
         //签名规则:将访问接口所需的参数集data + token字符串拼接后进行SHA256运算得到最后的签名,然后将签名参数sign(参数名为sign)放入http header中;
         // 			将访问接口所需的参数集data(参数名为data)放入http body。
         // 			算法为 sha-256 ( data+token ),使用utf-8编码
+        data.put("corpid", ConfigConstant.CORP_ID);
+        data.put("userId", ConfigConstant.USER_ID);
         String sign = ConfigConstant.getDataSign(data, TOKEN);
         String response;
         try {

@@ -33,8 +33,6 @@ public class XbbUserApi {
     public static List<DingTalkUser> list(String nameLike, List<String> userIdIn, Boolean delIgnore, Integer page, Integer pageSize) throws Exception {
         //创建参数data
         JSONObject data = new JSONObject();
-        data.put("corpid", ConfigConstant.CORP_ID);
-        data.put("userId", ConfigConstant.USER_ID);
         Optional.ofNullable(delIgnore).ifPresent(_0 -> data.put("delIgnore", _0 ? 1 : 0));
         Optional.ofNullable(nameLike).ifPresent(_0 -> data.put("nameLike", _0));
         Optional.ofNullable(userIdIn).ifPresent(_0 -> data.put("userIdIn", _0));
