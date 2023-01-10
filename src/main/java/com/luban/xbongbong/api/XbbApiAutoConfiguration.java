@@ -1,8 +1,7 @@
 package com.luban.xbongbong.api;
 
-import cn.hutool.extra.spring.EnableSpringUtil;
-import com.luban.xbongbong.api.biz.XbbLubanBizApi;
 import com.luban.xbongbong.api.biz.config.XbbBizConfig;
+import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 @EnableConfigurationProperties
-@Import({XbbBizConfig.class})
+@Import({XbbBizConfig.class, ConfigConstant.class})
 public class XbbApiAutoConfiguration {
 
     @ConditionalOnMissingBean
