@@ -3,6 +3,7 @@ package com.luban.xbongbong.api.biz.config;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,12 @@ import org.springframework.stereotype.Component;
 @Setter
 @ConfigurationProperties(prefix = "xbb.biz")
 @Component
-public class XbbBizConfig {
+public class XbbBizConfig implements SmartInitializingSingleton {
+
+    public static String CUSTOMER_FORM_CORP_ID_FIELD_NAME;
+    public static String OPEN_BID_FORM_NAME;
+    public static String BID_WINNING_NAME;
+    public static Long CUSTOMER_FORM_ID;
 
     /**
      * 企业客户表单企业id字段名称*
@@ -36,4 +42,12 @@ public class XbbBizConfig {
      * 企业中标记录表名*
      */
     private String bidWinningName;
+
+    @Override
+    public void afterSingletonsInstantiated() {
+        CUSTOMER_FORM_CORP_ID_FIELD_NAME = this.getCustomerFormCorpIdFieldName();
+        CUSTOMER_FORM_ID = this.getCustomerFormId();
+        OPEN_BID_FORM_NAME = this.getOpenBidFormName();
+        BID_WINNING_NAME = this.getBidWinningName();
+    }
 }

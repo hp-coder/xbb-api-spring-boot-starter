@@ -26,12 +26,7 @@ import java.util.stream.Collectors;
  *
  * @author HP 2023/1/6
  */
-@Component
-public class XbbLubanBizApi implements ApplicationContextAware {
-
-    private static XbbBizConfig XBB_BIZ_CONFIG;
-
-
+public class XbbLubanBizApi{
     /**
      * 根据qyId查询所有用户*
      *
@@ -46,9 +41,9 @@ public class XbbLubanBizApi implements ApplicationContextAware {
         do {
             final XbbFormCondition xbbFormCondition = new XbbFormCondition();
             xbbFormCondition.setValue(qyIds.stream().map(String::valueOf).collect(Collectors.toList()));
-            xbbFormCondition.setAttr(XBB_BIZ_CONFIG.getCustomerFormCorpIdFieldName());
+            xbbFormCondition.setAttr(XbbBizConfig.CUSTOMER_FORM_CORP_ID_FIELD_NAME);
             xbbFormCondition.setSymbol(XbbFormConditionSymbol.in);
-            final XbbCustomerListResponse response = XbbCustomerApi.list(XBB_BIZ_CONFIG.getCustomerFormId(), Collections.singletonList(xbbFormCondition), null, null, page++, 100);
+            final XbbCustomerListResponse response = XbbCustomerApi.list(XbbBizConfig.CUSTOMER_FORM_ID, Collections.singletonList(xbbFormCondition), null, null, page++, 100);
             if (response != null) {
                 list = response.getList();
                 total.addAll(list);
@@ -59,7 +54,7 @@ public class XbbLubanBizApi implements ApplicationContextAware {
                     total.stream()
                             .collect(
                                     Collectors.groupingBy(
-                                            customer -> customer.getData().getLong(XBB_BIZ_CONFIG.getCustomerFormCorpIdFieldName()),
+                                            customer -> customer.getData().getLong(XbbBizConfig.CUSTOMER_FORM_CORP_ID_FIELD_NAME),
                                             HashMap::new,
                                             Collectors.mapping(XbbCustomerListResponse.XbbCustomer::getDataId, Collectors.toList())
                                     )
@@ -77,7 +72,7 @@ public class XbbLubanBizApi implements ApplicationContextAware {
      * @throws RuntimeException 异常
      */
     public static boolean addOpenBid(@NonNull Xbb开标记录 openBid) throws RuntimeException {
-        final Long formId = XbbCustomFormApi.checkIfCustomFormExists(XBB_BIZ_CONFIG.getOpenBidFormName());
+        final Long formId = XbbCustomFormApi.checkIfCustomFormExists(XbbBizConfig.OPEN_BID_FORM_NAME);
         //TODO 查询企业id
         try {
             final XbbCustomFormAlterResponse add = XbbCustomFormApi.add(formId, JSON.parseObject(JSON.toJSONString(openBid)));
@@ -98,7 +93,7 @@ public class XbbLubanBizApi implements ApplicationContextAware {
      * @throws RuntimeException 异常*
      */
     public static boolean addBidWinning(@NonNull Xbb中标记录 bidWinning) throws RuntimeException {
-        final Long formId = XbbCustomFormApi.checkIfCustomFormExists(XBB_BIZ_CONFIG.getBidWinningName());
+        final Long formId = XbbCustomFormApi.checkIfCustomFormExists(XbbBizConfig.BID_WINNING_NAME);
         try {
             final XbbCustomFormAlterResponse add = XbbCustomFormApi.add(formId, JSONObject.parseObject(JSON.toJSONString(bidWinning)));
             if (add != null && add.getDataId() != null) {
@@ -110,8 +105,4 @@ public class XbbLubanBizApi implements ApplicationContextAware {
         return false;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        XBB_BIZ_CONFIG = applicationContext.getBean(XbbBizConfig.class);
-    }
 }
