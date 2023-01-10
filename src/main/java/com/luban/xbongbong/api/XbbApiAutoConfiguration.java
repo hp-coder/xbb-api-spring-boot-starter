@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
  * @author HP 2022/12/27
  */
 @Configuration
-@EnableSpringUtil
 @EnableConfigurationProperties
 public class XbbApiAutoConfiguration {
 

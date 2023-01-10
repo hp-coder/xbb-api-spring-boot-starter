@@ -1,7 +1,6 @@
 package com.luban.xbongbong.api.biz;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.luban.xbongbong.api.biz.config.XbbBizConfig;
@@ -14,6 +13,10 @@ import com.luban.xbongbong.api.model.customer.XbbCustomerListResponse;
 import com.luban.xbongbong.api.sdk.custom_form.XbbCustomFormApi;
 import com.luban.xbongbong.api.sdk.customer.XbbCustomerApi;
 import lombok.NonNull;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,13 +26,11 @@ import java.util.stream.Collectors;
  *
  * @author HP 2023/1/6
  */
-public class XbbLubanBizApi {
+@Component
+public class XbbLubanBizApi implements ApplicationContextAware {
 
-    private static final XbbBizConfig XBB_BIZ_CONFIG;
+    private static XbbBizConfig XBB_BIZ_CONFIG;
 
-    static {
-        XBB_BIZ_CONFIG = SpringUtil.getBean(XbbBizConfig.class);
-    }
 
     /**
      * 根据qyId查询所有用户*
@@ -107,5 +108,10 @@ public class XbbLubanBizApi {
             throw new RuntimeException("添加企业中标记失败", e);
         }
         return false;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        XBB_BIZ_CONFIG = applicationContext.getBean(XbbBizConfig.class);
     }
 }
