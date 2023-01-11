@@ -39,7 +39,7 @@ public class XbbLubanBizApi{
             xbbFormCondition.setValue(qyIds.stream().map(String::valueOf).collect(Collectors.toList()));
             xbbFormCondition.setAttr(XbbBizConfig.CUSTOMER_FORM_CORP_ID_FIELD_NAME);
             xbbFormCondition.setSymbol(XbbFormConditionSymbol.in);
-            final XbbCustomerListResponse response = XbbCustomerApi.list(XbbBizConfig.CUSTOMER_FORM_ID, Collections.singletonList(xbbFormCondition), null, false, page++, 100);
+            final XbbCustomerListResponse response = XbbCustomerApi.list(XbbBizConfig.CUSTOMER_FORM_ID, Collections.singletonList(xbbFormCondition), null, null, page++, 100);
             if (response != null) {
                 list = response.getList();
                 total.addAll(list);
