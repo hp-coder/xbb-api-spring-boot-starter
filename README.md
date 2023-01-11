@@ -36,7 +36,7 @@ xbb:
   webhook-token: 9c106a50fb6ee47331f4d97288ccfe51
   enable-request-control: true
   request-per-day: 50000
-  request-per-minute: 5000 #暂时没用，还要调整
+  request-per-minute: 500 #暂时没用，还要调整
   write-per-second: 2 #暂时没用，还要调整
   biz:
     open-bid-form-name: "开标记录"
