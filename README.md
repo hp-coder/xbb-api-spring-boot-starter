@@ -34,6 +34,10 @@ xbb:
   user-id: 28361647261063310
   token: ce42190bbfda01eafe6fadb2f83895cf
   webhook-token: 9c106a50fb6ee47331f4d97288ccfe51
+  enable-request-control: true
+  request-per-day: 50000
+  request-per-minute: 5000 #暂时没用，还要调整
+  write-per-second: 2 #暂时没用，还要调整
   biz:
     open-bid-form-name: "开标记录"
     bid-winning-name: "中标记录"
