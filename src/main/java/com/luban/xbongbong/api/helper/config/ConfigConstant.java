@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.helper.utils.DigestUtil;
 import com.luban.xbongbong.api.helper.utils.HttpRequestUtils;
+import com.luban.xbongbong.api.model.XbbResponse;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -11,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+
+import java.util.Optional;
 
 /**
  * 销帮帮接口全局配置与常量
@@ -29,6 +33,11 @@ public class ConfigConstant implements SmartInitializingSingleton {
     private String userId;
     private String token;
     private String webhookToken;
+    private boolean enableRequestControl;
+    private Long requestPerDay;
+    private Long requestPerMinute;
+    private Long writePerSecond;
+
 
     /**
      * 销帮帮接口根域名
@@ -64,6 +73,55 @@ public class ConfigConstant implements SmartInitializingSingleton {
     public static String USER_ID;
 
     /**
+     * 是否使用配置的请求限制*
+     */
+    public static boolean ENABLE_REQUEST_CONTROL = false;
+
+    /**
+     * 每天最多调用次数，必须小于10万*
+     */
+    public static Long REQUEST_PER_DAY = 0L;
+
+    /**
+     * 每分钟最多调用次数，每个平台单独配置必须小于1000*
+     */
+    public static Long REQUEST_PER_MINUTE = 0L;
+
+    /**
+     * 每秒最多写次数，必须小于3*
+     */
+    public static Long WRITE_PER_SECOND = 0L;
+
+    /**
+     * 每天调用接口次数限制的缓存key*
+     */
+    public static final String REDIS_REQUEST_PER_DAY = "xbb_api_request_per_day:count";
+    /**
+     * 每分钟调用次数限制的缓存key*
+     */
+    public static final String REDIS_REQUEST_PER_MINUTE = "xbb_api_request_per_minute:count";
+
+    /**
+     * 没秒钟写接口次数限制的缓存key*
+     */
+    public static final String REDIS_WRITE_PER_SECOND = "xbb_api_write_per_second:count";
+
+    /**
+     * 一天最大调用十万次*
+     */
+    public static final Integer MAX_TOTAL_REQUEST_PER_DAY = 100000;
+
+    /**
+     * 一分钟最大调用一千次*
+     */
+    public static final Integer MAX_TOTAL_REQUEST_PER_MINUTE = 1000;
+
+    /**
+     * 写接口每秒3次*
+     */
+    public static final Integer MAX_WRITE_REQUEST_PER_SECOND = 3;
+
+    /**
      * 表单模块接口地址
      */
     public enum FORM {
@@ -79,7 +137,6 @@ public class ConfigConstant implements SmartInitializingSingleton {
         public static final String GET = "/pro/v2/api/form/get";
 
     }
-
 
     /**
      * 客户模块接口地址*
@@ -215,6 +272,10 @@ public class ConfigConstant implements SmartInitializingSingleton {
      */
     public static String xbbApi(String url, JSONObject data) throws XbbException {
         log.debug("Xbb API Request Payload: {}", data.toJSONString());
+        if (ENABLE_REQUEST_CONTROL && !XbbRequestControlConfig.proceed(url)) {
+            final XbbResponse<JSONObject> xbbResponse = new XbbResponse<>(-1, "请求以达到上限", false, null);
+            return JSONObject.toJSONString(xbbResponse);
+        }
         String absoluteUrl = ConfigConstant.getApiUrl(url);
         //签名规则:将访问接口所需的参数集data + token字符串拼接后进行SHA256运算得到最后的签名,然后将签名参数sign(参数名为sign)放入http header中;
         // 			将访问接口所需的参数集data(参数名为data)放入http body。
@@ -239,5 +300,24 @@ public class ConfigConstant implements SmartInitializingSingleton {
         USER_ID = userId;
         TOKEN = token;
         WEBHOOK_TOKEN = webhookToken;
+        ENABLE_REQUEST_CONTROL = enableRequestControl;
+        Optional.ofNullable(requestPerDay).ifPresent(i -> {
+            Assert.isTrue(i > MAX_TOTAL_REQUEST_PER_MINUTE, () -> {
+                throw new RuntimeException("每分钟所有请求最大不能超过" + MAX_TOTAL_REQUEST_PER_MINUTE + "次");
+            });
+            REQUEST_PER_DAY = requestPerDay;
+        });
+        Optional.ofNullable(requestPerMinute).ifPresent(i -> {
+            Assert.isTrue(i > MAX_TOTAL_REQUEST_PER_MINUTE, () -> {
+                throw new RuntimeException("每分钟所有请求最大不能超过" + MAX_TOTAL_REQUEST_PER_MINUTE + "次");
+            });
+            REQUEST_PER_MINUTE = requestPerMinute;
+        });
+        Optional.ofNullable(requestPerDay).ifPresent(i -> {
+            Assert.isTrue(i > MAX_WRITE_REQUEST_PER_SECOND, () -> {
+                throw new RuntimeException("每分钟写请求最大不能超过" + MAX_WRITE_REQUEST_PER_SECOND + "次");
+            });
+            WRITE_PER_SECOND = writePerSecond;
+        });
     }
 }

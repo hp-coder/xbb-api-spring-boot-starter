@@ -13,10 +13,6 @@ import com.luban.xbongbong.api.model.customer.XbbCustomerListResponse;
 import com.luban.xbongbong.api.sdk.custom_form.XbbCustomFormApi;
 import com.luban.xbongbong.api.sdk.customer.XbbCustomerApi;
 import lombok.NonNull;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
