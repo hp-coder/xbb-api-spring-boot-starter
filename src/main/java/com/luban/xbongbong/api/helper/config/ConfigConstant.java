@@ -276,17 +276,19 @@ public class ConfigConstant implements SmartInitializingSingleton {
             final XbbResponse<JSONObject> xbbResponse = new XbbResponse<>(-1, "请求以达到上限", false, null);
             return JSONObject.toJSONString(xbbResponse);
         }
-        String absoluteUrl = ConfigConstant.getApiUrl(url);
         //签名规则:将访问接口所需的参数集data + token字符串拼接后进行SHA256运算得到最后的签名,然后将签名参数sign(参数名为sign)放入http header中;
         // 			将访问接口所需的参数集data(参数名为data)放入http body。
         // 			算法为 sha-256 ( data+token ),使用utf-8编码
         data.put("corpid", ConfigConstant.CORP_ID);
         data.put("userId", ConfigConstant.USER_ID);
         String sign = ConfigConstant.getDataSign(data, TOKEN);
+        log.debug("Xbb Request Data：{}", data.toJSONString());
+        log.debug("Xbb Request sign：{}", sign);
         String response;
         try {
             //发起post请求，data作为 request body，sign在 http-header中传输
-            response = HttpRequestUtils.post(absoluteUrl, data.toJSONString(), sign);
+            response = HttpRequestUtils.post(ConfigConstant.getApiUrl(url), data.toJSONString(), sign);
+            log.debug("Xbb Response: {}", response);
         } catch (Exception e) {
             throw new XbbException(-1, "http post访问出错");
         }
