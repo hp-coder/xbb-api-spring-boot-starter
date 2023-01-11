@@ -62,7 +62,7 @@ public class XbbCustomerApi {
         xbbFormCondition.setAttr(userIdField);
         xbbFormCondition.setSymbol(XbbFormConditionSymbol.eq);
         xbbFormCondition.setValue(Collections.singletonList(userId));
-        final XbbCustomerListResponse response = list(formId, Collections.singletonList(xbbFormCondition), null, null, 1, 1);
+        final XbbCustomerListResponse response = list(formId, Collections.singletonList(xbbFormCondition), null, false, 1, 1);
         if (response == null || CollectionUtils.isEmpty(response.getList())) {
             return null;
         }
