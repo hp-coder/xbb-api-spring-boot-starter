@@ -304,19 +304,19 @@ public class ConfigConstant implements SmartInitializingSingleton {
         WEBHOOK_TOKEN = webhookToken;
         ENABLE_REQUEST_CONTROL = enableRequestControl;
         Optional.ofNullable(requestPerDay).ifPresent(i -> {
-            Assert.isTrue(i > MAX_TOTAL_REQUEST_PER_MINUTE, () -> {
+            Assert.isTrue(i <= MAX_TOTAL_REQUEST_PER_MINUTE, () -> {
                 throw new RuntimeException("每分钟所有请求最大不能超过" + MAX_TOTAL_REQUEST_PER_MINUTE + "次");
             });
             REQUEST_PER_DAY = requestPerDay;
         });
         Optional.ofNullable(requestPerMinute).ifPresent(i -> {
-            Assert.isTrue(i > MAX_TOTAL_REQUEST_PER_MINUTE, () -> {
+            Assert.isTrue(i <= MAX_TOTAL_REQUEST_PER_MINUTE, () -> {
                 throw new RuntimeException("每分钟所有请求最大不能超过" + MAX_TOTAL_REQUEST_PER_MINUTE + "次");
             });
             REQUEST_PER_MINUTE = requestPerMinute;
         });
         Optional.ofNullable(requestPerDay).ifPresent(i -> {
-            Assert.isTrue(i > MAX_WRITE_REQUEST_PER_SECOND, () -> {
+            Assert.isTrue(i <= MAX_WRITE_REQUEST_PER_SECOND, () -> {
                 throw new RuntimeException("每分钟写请求最大不能超过" + MAX_WRITE_REQUEST_PER_SECOND + "次");
             });
             WRITE_PER_SECOND = writePerSecond;
