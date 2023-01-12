@@ -122,6 +122,11 @@ public class ConfigConstant implements SmartInitializingSingleton {
     public static final Integer MAX_WRITE_REQUEST_PER_SECOND = 3;
 
     /**
+     * 接口校验值
+     */
+    public static final String REQUEST_HEADER_SIGN = "sign";
+
+    /**
      * 表单模块接口地址
      */
     public enum FORM {
@@ -265,7 +270,7 @@ public class ConfigConstant implements SmartInitializingSingleton {
 
     /**
      * 调用xbb api，生成签名 ，发起HTTP POST请求
-     *
+     * TODO 这里改producer
      * @param url,xbb api的接口url，不包含域名,从/开始，例如"/pro/v2/api/form/list"
      * @param data    请求参数(JSON格式)
      * @return 接口回参

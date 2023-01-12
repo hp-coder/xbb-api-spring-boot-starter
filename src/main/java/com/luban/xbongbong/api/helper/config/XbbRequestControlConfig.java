@@ -21,6 +21,11 @@ public class XbbRequestControlConfig {
 
     public static final List<String> NON_WRITE_SUFFIX = Arrays.asList("get", "list", "detail");
 
+    /**
+     * TODO 这里只在consumer里判断是否可以调用
+     * @param url
+     * @return
+     */
     public static boolean proceed(String url) {
         redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
         final Long day = redisTemplate.opsForValue().increment(ConfigConstant.REDIS_REQUEST_PER_DAY);
@@ -54,7 +59,6 @@ public class XbbRequestControlConfig {
         return  LocalDateTime.of(LocalDate.now(), LocalTime.MAX).atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli()
                 -
                 LocalDateTime.now().atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
-
     }
 
 }

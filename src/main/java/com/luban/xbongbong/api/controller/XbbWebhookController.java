@@ -32,19 +32,13 @@ public class XbbWebhookController {
     private final ExecutorService executor;
 
     @PostMapping("/event/listener")
-    public void listener(@RequestBody WebhookPayload payload,
-                         @RequestHeader(name = "sign") String sign) {
+    public void listener(@RequestBody WebhookPayload payload, @RequestHeader(name = ConfigConstant.REQUEST_HEADER_SIGN) String sign) {
         log.info("Xbb Webhook Request Payload : {}", payload.toString());
         log.info("Xbb Webhook Request Sign : {}", sign);
-        Assert.isTrue(
-                Objects.equals(ConfigConstant.getDataSign(payload.toString(), ConfigConstant.WEBHOOK_TOKEN), sign), () -> {
-                    throw new RuntimeException("验签失败，非法请求");
-                }
-        );
+        Assert.isTrue(Objects.equals(ConfigConstant.getDataSign(payload.toString(), ConfigConstant.WEBHOOK_TOKEN), sign), () -> {
+            throw new RuntimeException("验签失败，非法请求");
+        });
         log.info("Xbb Webhook Request Sign Is Valid");
-        XbbWebhookEventProcessor.PROCESSORS
-                .stream()
-                .filter(processor -> processor.proceed().test(payload))
-                .forEach(processor -> executor.execute(() -> processor.process().accept(payload)));
+        XbbWebhookEventProcessor.PROCESSORS.stream().filter(processor -> processor.proceed().test(payload)).forEach(processor -> executor.execute(() -> processor.process().accept(payload)));
     }
 }
