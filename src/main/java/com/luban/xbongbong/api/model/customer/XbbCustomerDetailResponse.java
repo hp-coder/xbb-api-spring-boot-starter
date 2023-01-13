@@ -1,8 +1,6 @@
 package com.luban.xbongbong.api.model.customer;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import jdk.jfr.internal.OldObjectSample;
 import lombok.Data;
 
 /**

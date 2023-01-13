@@ -5,6 +5,7 @@ import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.helper.utils.DigestUtil;
 import com.luban.xbongbong.api.helper.utils.HttpRequestUtils;
 import com.luban.xbongbong.api.model.XbbResponse;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.Optional;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * 销帮帮接口全局配置与常量
@@ -268,9 +270,20 @@ public class ConfigConstant implements SmartInitializingSingleton {
         return DigestUtil.Encrypt(data + token, "SHA-256");
     }
 
+//    /**
+//     * 这里如果短时间内都超1000条了，那基本上也就超阈值了
+//     */
+//    private static final BlockingQueue<RequestItem> QUEUE = (BlockingQueue<RequestItem>) new LinkedBlockingQueue<RequestItem>(1000);
+
+    @Getter
+    @AllArgsConstructor
+    public static class RequestItem{
+        private String url;
+        private JSONObject data;
+    }
     /**
      * 调用xbb api，生成签名 ，发起HTTP POST请求
-     * TODO 这里改producer
+     * TODO 这里改producer 目前只考虑单线程的情况
      * @param url,xbb api的接口url，不包含域名,从/开始，例如"/pro/v2/api/form/list"
      * @param data    请求参数(JSON格式)
      * @return 接口回参
@@ -298,6 +311,16 @@ public class ConfigConstant implements SmartInitializingSingleton {
             throw new XbbException(-1, "http post访问出错");
         }
         return response;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        final LinkedBlockingQueue<Object> objects = new LinkedBlockingQueue<>(100);
+        objects.put(1);
+        objects.put(2);
+        objects.put(3);
+        System.out.println(objects.take());
+        System.out.println(objects.take());
+        System.out.println(objects.take());
     }
 
     @Override
