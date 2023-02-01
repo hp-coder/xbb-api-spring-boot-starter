@@ -19,6 +19,10 @@ import java.util.Optional;
  */
 public class XbbUserApi {
 
+    private XbbUserApi(){
+        throw new AssertionError();
+    }
+
     /**
      * 系统用户列表*
      *

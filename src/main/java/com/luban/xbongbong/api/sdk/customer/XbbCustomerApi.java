@@ -24,6 +24,9 @@ import java.util.Optional;
  */
 public class XbbCustomerApi {
 
+    private XbbCustomerApi(){
+        throw new AssertionError();
+    }
 
     /**
      * 客户信息详情接口*

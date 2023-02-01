@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.Optional;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * 销帮帮接口全局配置与常量
@@ -291,7 +290,7 @@ public class ConfigConstant implements SmartInitializingSingleton {
     public static String xbbApi(String url, JSONObject data) throws XbbException {
         log.debug("Xbb API Request Payload: {}", data.toJSONString());
         if (ENABLE_REQUEST_CONTROL && !XbbRequestControlConfig.proceed(url)) {
-            final XbbResponse<JSONObject> xbbResponse = new XbbResponse<>(-1, "请求以达到上限", false, null);
+            final XbbResponse<JSONObject> xbbResponse = new XbbResponse<>(-1, "请求以达到上限", false, new JSONObject());
             return JSONObject.toJSONString(xbbResponse);
         }
         //签名规则:将访问接口所需的参数集data + token字符串拼接后进行SHA256运算得到最后的签名,然后将签名参数sign(参数名为sign)放入http header中;
@@ -313,16 +312,6 @@ public class ConfigConstant implements SmartInitializingSingleton {
         return response;
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        final LinkedBlockingQueue<Object> objects = new LinkedBlockingQueue<>(100);
-        objects.put(1);
-        objects.put(2);
-        objects.put(3);
-        System.out.println(objects.take());
-        System.out.println(objects.take());
-        System.out.println(objects.take());
-    }
-
     @Override
     public void afterSingletonsInstantiated() {
         XBB_API_ROOT = gateway;
@@ -332,8 +321,8 @@ public class ConfigConstant implements SmartInitializingSingleton {
         WEBHOOK_TOKEN = webhookToken;
         ENABLE_REQUEST_CONTROL = enableRequestControl;
         Optional.ofNullable(requestPerDay).ifPresent(i -> {
-            Assert.isTrue(i <= MAX_TOTAL_REQUEST_PER_MINUTE, () -> {
-                throw new RuntimeException("每分钟所有请求最大不能超过" + MAX_TOTAL_REQUEST_PER_MINUTE + "次");
+            Assert.isTrue(i <= MAX_TOTAL_REQUEST_PER_DAY, () -> {
+                throw new RuntimeException("每天所有请求最大不能超过" + MAX_TOTAL_REQUEST_PER_DAY + "次");
             });
             REQUEST_PER_DAY = requestPerDay;
         });

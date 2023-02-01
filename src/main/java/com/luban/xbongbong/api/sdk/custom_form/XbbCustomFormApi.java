@@ -27,6 +27,9 @@ import java.util.Optional;
 
 public class XbbCustomFormApi {
 
+    private XbbCustomFormApi(){
+        throw new AssertionError();
+    }
 
     /**
      * 查询是否有该名称的自定义表单*

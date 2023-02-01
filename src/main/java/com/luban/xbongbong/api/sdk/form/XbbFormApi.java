@@ -20,6 +20,9 @@ import java.util.Optional;
  */
 public class XbbFormApi {
 
+    private XbbFormApi(){
+        throw new AssertionError();
+    }
     /**
      * 表单模板列表接口
      *

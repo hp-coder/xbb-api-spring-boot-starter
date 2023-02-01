@@ -19,10 +19,17 @@ import java.util.stream.Collectors;
 
 /**
  * 对鲁班的业务接口 *
- *
+ * Non-instantiable utility class
  * @author HP 2023/1/6
  */
-public class XbbLubanBizApi{
+public class XbbLubanBizApi {
+    /**
+     * Suppress default constructor for non-instantiability
+     */
+    private XbbLubanBizApi() {
+        throw new AssertionError();
+    }
+
     /**
      * 根据qyId查询所有用户*
      *
@@ -46,15 +53,7 @@ public class XbbLubanBizApi{
             }
         } while (CollUtil.isNotEmpty(list));
         if (CollUtil.isNotEmpty(total)) {
-            final HashMap<Long, List<Long>> result =
-                    total.stream()
-                            .collect(
-                                    Collectors.groupingBy(
-                                            customer -> customer.getData().getLong(XbbBizConfig.CUSTOMER_FORM_CORP_ID_FIELD_NAME),
-                                            HashMap::new,
-                                            Collectors.mapping(XbbCustomerListResponse.XbbCustomer::getDataId, Collectors.toList())
-                                    )
-                            );
+            final HashMap<Long, List<Long>> result = total.stream().collect(Collectors.groupingBy(customer -> customer.getData().getLong(XbbBizConfig.CUSTOMER_FORM_CORP_ID_FIELD_NAME), HashMap::new, Collectors.mapping(XbbCustomerListResponse.XbbCustomer::getDataId, Collectors.toList())));
             return Optional.of(result);
         }
         return Optional.empty();
