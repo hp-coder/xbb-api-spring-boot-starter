@@ -332,9 +332,9 @@ public class ConfigConstant implements SmartInitializingSingleton {
             });
             REQUEST_PER_MINUTE = requestPerMinute;
         });
-        Optional.ofNullable(requestPerDay).ifPresent(i -> {
+        Optional.ofNullable(writePerSecond).ifPresent(i -> {
             Assert.isTrue(i <= MAX_WRITE_REQUEST_PER_SECOND, () -> {
-                throw new RuntimeException("每分钟写请求最大不能超过" + MAX_WRITE_REQUEST_PER_SECOND + "次");
+                throw new RuntimeException("每秒写请求最大不能超过" + MAX_WRITE_REQUEST_PER_SECOND + "次");
             });
             WRITE_PER_SECOND = writePerSecond;
         });
