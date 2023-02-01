@@ -68,7 +68,6 @@ public class XbbLubanBizApi {
      */
     public static boolean addOpenBid(@NonNull Xbb开标记录 openBid) throws RuntimeException {
         final Long formId = XbbCustomFormApi.checkIfCustomFormExists(XbbBizConfig.OPEN_BID_FORM_NAME);
-        //TODO 查询企业id
         try {
             final XbbCustomFormAlterResponse add = XbbCustomFormApi.add(formId, JSON.parseObject(JSON.toJSONString(openBid)));
             if (add != null && add.getDataId() != null) {
