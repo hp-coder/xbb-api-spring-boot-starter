@@ -144,6 +144,19 @@ public class ConfigConstant implements SmartInitializingSingleton {
 
     }
 
+    public enum LABEL {
+        ;
+        /**
+         * 添加标签
+         */
+        public static final String ADD = "/pro/v2/api/label/batch/add";
+        /**
+         * 表单标签组
+         */
+        public static final String FORM_LABEL_LIST = "/pro/v2/api/label/allList";
+    }
+
+
     /**
      * 客户模块接口地址*
      */

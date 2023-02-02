@@ -1,8 +1,10 @@
 package com.luban.xbongbong.api.sdk.customer;
 
+import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.luban.xbongbong.api.biz.config.XbbBizConfig;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.helper.enums.XbbFormConditionSymbol;
 import com.luban.xbongbong.api.helper.enums.XbbSubBusinessType;
@@ -14,10 +16,7 @@ import lombok.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 客户模块
@@ -26,6 +25,21 @@ public class XbbCustomerApi {
 
     private XbbCustomerApi(){
         throw new AssertionError();
+    }
+
+
+    public static List<XbbCustomerListResponse.XbbCustomer> recursivelyGetCustomersByConditions(List<XbbFormCondition> conditions) throws Exception {
+        List<XbbCustomerListResponse.XbbCustomer> total = new ArrayList<>();
+        List<XbbCustomerListResponse.XbbCustomer> list = null;
+        int page = 1;
+        do {
+            final XbbCustomerListResponse response = XbbCustomerApi.list(XbbBizConfig.CUSTOMER_FORM_ID, conditions, null, null, page++, 100);
+            if (response != null) {
+                list = response.getList();
+                total.addAll(list);
+            }
+        } while (CollUtil.isNotEmpty(list));
+        return total;
     }
 
     /**

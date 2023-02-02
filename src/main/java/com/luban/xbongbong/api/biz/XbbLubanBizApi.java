@@ -38,20 +38,11 @@ public class XbbLubanBizApi {
      * @throws Exception 请求异常
      */
     public static Optional<Map<Long, List<Long>>> getCustomerIdsByQyIds(List<Long> qyIds) throws Exception {
-        List<XbbCustomerListResponse.XbbCustomer> total = new ArrayList<>();
-        List<XbbCustomerListResponse.XbbCustomer> list = null;
-        int page = 1;
-        do {
-            final XbbFormCondition xbbFormCondition = new XbbFormCondition();
-            xbbFormCondition.setValue(qyIds.stream().map(String::valueOf).collect(Collectors.toList()));
-            xbbFormCondition.setAttr(XbbBizConfig.CUSTOMER_FORM_CORP_ID_FIELD_NAME);
-            xbbFormCondition.setSymbol(XbbFormConditionSymbol.in);
-            final XbbCustomerListResponse response = XbbCustomerApi.list(XbbBizConfig.CUSTOMER_FORM_ID, Collections.singletonList(xbbFormCondition), null, null, page++, 100);
-            if (response != null) {
-                list = response.getList();
-                total.addAll(list);
-            }
-        } while (CollUtil.isNotEmpty(list));
+        final XbbFormCondition xbbFormCondition = new XbbFormCondition();
+        xbbFormCondition.setAttr(XbbBizConfig.CUSTOMER_FORM_CORP_ID_FIELD_NAME);
+        xbbFormCondition.setValue(qyIds.stream().map(String::valueOf).collect(Collectors.toList()));
+        xbbFormCondition.setSymbol(XbbFormConditionSymbol.in);
+        List<XbbCustomerListResponse.XbbCustomer> total = XbbCustomerApi.recursivelyGetCustomersByConditions(Collections.singletonList(xbbFormCondition));
         if (CollUtil.isNotEmpty(total)) {
             final HashMap<Long, List<Long>> result = total.stream().collect(Collectors.groupingBy(customer -> customer.getData().getLong(XbbBizConfig.CUSTOMER_FORM_CORP_ID_FIELD_NAME), HashMap::new, Collectors.mapping(XbbCustomerListResponse.XbbCustomer::getDataId, Collectors.toList())));
             return Optional.of(result);
