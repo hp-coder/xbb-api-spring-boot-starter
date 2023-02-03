@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,14 +22,9 @@ public class XbbRequestControlConfig {
 
     public static final List<String> NON_WRITE_SUFFIX = Arrays.asList("get", "list", "detail");
 
-    /**
-     * TODO 这里只在consumer里判断是否可以调用
-     * @param url
-     * @return
-     */
     public static boolean proceed(String url) {
         redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
-        final Long day = redisTemplate.opsForValue().increment(ConfigConstant.REDIS_REQUEST_PER_DAY);
+        final Long day = Optional.ofNullable(redisTemplate.opsForValue().increment(ConfigConstant.REDIS_REQUEST_PER_DAY)).orElse(0L);
         setCache(day, ConfigConstant.REDIS_REQUEST_PER_DAY, getRestOfTheDayToMill(), TimeUnit.MILLISECONDS);
         if (day >= ConfigConstant.REQUEST_PER_DAY) {
             return false;
@@ -56,7 +52,7 @@ public class XbbRequestControlConfig {
     }
 
     protected static Long getRestOfTheDayToMill() {
-        return  LocalDateTime.of(LocalDate.now(), LocalTime.MAX).atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli()
+        return LocalDateTime.of(LocalDate.now(), LocalTime.MAX).atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli()
                 -
                 LocalDateTime.now().atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
     }
