@@ -1,5 +1,8 @@
 package com.luban.xbongbong.api.model.label;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.luban.xbongbong.api.helper.enums.XbbFormBizType;
+import com.luban.xbongbong.api.helper.serializer.XbbFormBizTypeSerializer;
 import com.luban.xbongbong.api.model.BaseXbbModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +22,6 @@ public class XbbRemoveLabelModel extends BaseXbbModel {
     private List<Long> labelIds;
     private String attr;
     private Long formId;
+    @JSONField(serializeUsing = XbbFormBizTypeSerializer.class)
+    private XbbFormBizType businessType;
 }
