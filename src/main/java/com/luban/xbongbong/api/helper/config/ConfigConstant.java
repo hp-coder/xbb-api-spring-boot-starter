@@ -154,6 +154,11 @@ public class ConfigConstant implements SmartInitializingSingleton {
          * 表单标签组
          */
         public static final String FORM_LABEL_LIST = "/pro/v2/api/label/allList";
+
+        /**
+         * 移除标签
+         */
+        public static final String REMOVE = "/pro/v2/api/label/batch/remove";
     }
 
 

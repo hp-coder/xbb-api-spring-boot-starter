@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 固定的用户表单标签
@@ -22,5 +24,9 @@ public enum XbbCustomerLabel {
 
     public static XbbCustomerLabel getByName(String name) throws Exception {
         return Arrays.stream(XbbCustomerLabel.values()).filter(i -> Objects.equals(i.getName(), name)).findFirst().orElse(null);
+    }
+
+    public static List<XbbCustomerLabel> besidesThis(String name) throws Exception {
+        return Arrays.stream(XbbCustomerLabel.values()).filter(i -> !Objects.equals(i.getName(), name)).collect(Collectors.toList());
     }
 }

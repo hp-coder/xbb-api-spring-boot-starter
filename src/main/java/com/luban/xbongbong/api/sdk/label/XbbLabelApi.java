@@ -9,6 +9,7 @@ import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.label.XbbAddLabelModel;
 import com.luban.xbongbong.api.model.label.XbbFormLabelResponse;
+import com.luban.xbongbong.api.model.label.XbbRemoveLabelModel;
 import lombok.NonNull;
 
 import java.util.List;
@@ -73,11 +74,26 @@ public class XbbLabelApi {
     public static boolean add(@NonNull XbbAddLabelModel model) throws Exception {
         String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.ADD, model.json());
         //对返回值进行解析
+        return getBaseResponse(response);
+    }
+
+    /**
+     * 移除标签（非删除标签本身）
+     * @param model 参数
+     * @return 是否成功
+     * @throws Exception 异常
+     */
+    public static boolean remove(@NonNull XbbRemoveLabelModel model) throws Exception {
+        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.REMOVE, model.json());
+        //对返回值进行解析
+        return getBaseResponse(response);
+    }
+
+    private static boolean getBaseResponse(String response) throws Exception {
         XbbResponse<?> xbbResponse;
         try {
             xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<?>>() {
             });
-
         } catch (Exception e) {
             throw new Exception("json解析出错", e);
         }
