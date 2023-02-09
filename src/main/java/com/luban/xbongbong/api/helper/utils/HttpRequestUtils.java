@@ -34,7 +34,9 @@ public class HttpRequestUtils {
             //参数设置
             RequestConfig requestConfig = RequestConfig.custom()
                     .setConnectTimeout(10000)
-                    .setSocketTimeout(10000).build();
+                    .setConnectionRequestTimeout(10000)
+                    .setSocketTimeout(10000)
+                    .build();
             httppost.setConfig(requestConfig);
             StringEntity uefEntity = new StringEntity(param, "UTF-8");
             uefEntity.setContentType("application/json");
