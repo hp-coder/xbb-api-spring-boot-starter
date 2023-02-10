@@ -1,4 +1,4 @@
-package com.luban.xbongbong.api.model.label;
+package com.luban.xbongbong.api.helper.enums.label;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
