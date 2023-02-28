@@ -1,19 +1,22 @@
 package com.luban.xbongbong.api.helper.config;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.helper.utils.DigestUtil;
-import com.luban.xbongbong.api.helper.utils.HttpRequestUtils;
-import com.luban.xbongbong.api.model.XbbResponse;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
@@ -38,7 +41,6 @@ public class ConfigConstant implements SmartInitializingSingleton {
     private Long requestPerDay;
     private Long requestPerMinute;
     private Long writePerSecond;
-
 
     /**
      * 销帮帮接口根域名
@@ -267,6 +269,11 @@ public class ConfigConstant implements SmartInitializingSingleton {
 
     /**
      * 获取签名
+     * <p>
+     * 规则:
+     * 将访问接口所需的参数集data + token字符串拼接后进行SHA256运算得到最后的签名,然后将签名参数sign(参数名为sign)放入http header中;
+     * 将访问接口所需的参数集data(参数名为data)放入http body。
+     * 算法为 sha-256 ( data+token ),使用utf-8编码
      *
      * @param data  请求参数(JSON格式)
      * @param token 令牌
@@ -278,6 +285,11 @@ public class ConfigConstant implements SmartInitializingSingleton {
 
     /**
      * 获取签名
+     * <p>
+     * 规则:
+     * 将访问接口所需的参数集data + token字符串拼接后进行SHA256运算得到最后的签名,然后将签名参数sign(参数名为sign)放入http header中;
+     * 将访问接口所需的参数集data(参数名为data)放入http body。
+     * 算法为 sha-256 ( data+token ),使用utf-8编码
      *
      * @param data  请求参数(JSON格式)
      * @param token 令牌
@@ -287,47 +299,34 @@ public class ConfigConstant implements SmartInitializingSingleton {
         return DigestUtil.Encrypt(data + token, "SHA-256");
     }
 
-//    /**
-//     * 这里如果短时间内都超1000条了，那基本上也就超阈值了
-//     */
-//    private static final BlockingQueue<RequestItem> QUEUE = (BlockingQueue<RequestItem>) new LinkedBlockingQueue<RequestItem>(1000);
-
-    @Getter
-    @AllArgsConstructor
-    public static class RequestItem{
-        private String url;
-        private JSONObject data;
-    }
     /**
      * 调用xbb api，生成签名 ，发起HTTP POST请求
-     * TODO 这里改producer 目前只考虑单线程的情况
+     *
      * @param url,xbb api的接口url，不包含域名,从/开始，例如"/pro/v2/api/form/list"
      * @param data    请求参数(JSON格式)
      * @return 接口回参
      */
-    public static String xbbApi(String url, JSONObject data) throws XbbException {
+    public static String xbbApi(String url, JSONObject data, ApiType apiType) throws XbbException {
         log.debug("Xbb API Request Payload: {}", data.toJSONString());
-        if (ENABLE_REQUEST_CONTROL && !XbbRequestControlConfig.proceed(url)) {
-            final XbbResponse<JSONObject> xbbResponse = new XbbResponse<>(-1, "请求以达到上限", false, new JSONObject());
-            return JSONObject.toJSONString(xbbResponse);
+        if (ENABLE_REQUEST_CONTROL && !XbbRequestControlConfig.proceed(apiType)) {
+            xbbApi(url, data, apiType);
         }
-        //签名规则:将访问接口所需的参数集data + token字符串拼接后进行SHA256运算得到最后的签名,然后将签名参数sign(参数名为sign)放入http header中;
-        // 			将访问接口所需的参数集data(参数名为data)放入http body。
-        // 			算法为 sha-256 ( data+token ),使用utf-8编码
-        data.put("corpid", ConfigConstant.CORP_ID);
-        data.put("userId", ConfigConstant.USER_ID);
-        String sign = ConfigConstant.getDataSign(data, TOKEN);
-        log.debug("Xbb Request Data：{}", data.toJSONString());
-        log.debug("Xbb Request sign：{}", sign);
-        String response;
         try {
-            //发起post请求，data作为 request body，sign在 http-header中传输
-            response = HttpRequestUtils.post(ConfigConstant.getApiUrl(url), data.toJSONString(), sign);
-            log.debug("Xbb Response: {}", response);
+            data.put("corpid", ConfigConstant.CORP_ID);
+            data.put("userId", ConfigConstant.USER_ID);
+            String sign = ConfigConstant.getDataSign(data, TOKEN);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("sign", sign);
+            HttpEntity<String> entity = new HttpEntity<>(data.toJSONString(), headers);
+
+            final String response =  SpringUtil.getBean(RestTemplate.class).postForObject(ConfigConstant.getApiUrl(url), entity, String.class);
+            log.debug("response: {}", response);
+            return response;
         } catch (Exception e) {
             throw new XbbException(-1, "http post访问出错");
         }
-        return response;
     }
 
     @Override

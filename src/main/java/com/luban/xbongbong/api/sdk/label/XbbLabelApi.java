@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.helper.enums.XbbBizType;
+import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.label.XbbAddLabelModel;
@@ -34,7 +35,7 @@ public class XbbLabelApi {
      * @param isRelabel    是否展示回收站的标签, 批量移标签需要展示出回收站中的标签 传1
      * @return 表单上的标签组
      */
-    public static List<XbbFormLabelResponse.LabelGroup> formLabels(@NonNull long formId, @NonNull XbbBizType businessType, boolean enable, String name, Integer isRelabel) throws Exception {
+    public static List<XbbFormLabelResponse.LabelGroup> formLabels(long formId, @NonNull XbbBizType businessType, boolean enable, String name, Integer isRelabel) throws Exception {
         //创建请求参数data
         JSONObject data = new JSONObject();
         data.put("formId", formId);
@@ -43,7 +44,7 @@ public class XbbLabelApi {
         Optional.ofNullable(name).ifPresent(i -> data.put("name", i));
         Optional.ofNullable(isRelabel).ifPresent(i -> data.put("isRelabel", i));
         //调用xbbApi方法，发起API请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.FORM_LABEL_LIST, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.FORM_LABEL_LIST, data, ApiType.READ);
         //对返回值进行解析
         XbbResponse<XbbFormLabelResponse> xbbResponse;
         try {
@@ -72,19 +73,20 @@ public class XbbLabelApi {
      * @throws Exception 异常
      */
     public static boolean add(@NonNull XbbAddLabelModel model) throws Exception {
-        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.ADD, model.json());
+        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.ADD, model.json(), ApiType.WRITE);
         //对返回值进行解析
         return getBaseResponse(response);
     }
 
     /**
      * 移除标签（非删除标签本身）
+     *
      * @param model 参数
      * @return 是否成功
      * @throws Exception 异常
      */
     public static boolean remove(@NonNull XbbRemoveLabelModel model) throws Exception {
-        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.REMOVE, model.json());
+        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.REMOVE, model.json(), ApiType.WRITE);
         //对返回值进行解析
         return getBaseResponse(response);
     }

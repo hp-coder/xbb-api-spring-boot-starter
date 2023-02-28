@@ -7,6 +7,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.helper.enums.XbbFormBizType;
 import com.luban.xbongbong.api.helper.enums.XbbFormType;
+import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.form.XbbFormListResponse;
 import lombok.NonNull;
@@ -17,12 +18,14 @@ import java.util.Optional;
 
 /**
  * 表单模板
+ * @author hp
  */
 public class XbbFormApi {
 
-    private XbbFormApi(){
+    private XbbFormApi() {
         throw new AssertionError();
     }
+
     /**
      * 表单模板列表接口
      *
@@ -35,10 +38,10 @@ public class XbbFormApi {
         //创建请求参数data
         JSONObject data = new JSONObject();
         data.put("saasMark", formType.getCode());
-        Optional.ofNullable(name).ifPresent(_0 -> data.put("name", _0));
-        Optional.ofNullable(businessType).ifPresent(_0 -> data.put("businessType", _0.getCode()));
+        Optional.ofNullable(name).ifPresent(i -> data.put("name", i));
+        Optional.ofNullable(businessType).ifPresent(i -> data.put("businessType", i.getCode()));
         //调用xbbApi方法，发起API请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.FORM.LIST, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.FORM.LIST, data, ApiType.READ);
         //对返回值进行解析
         XbbResponse<XbbFormListResponse> xbbResponse;
         try {
@@ -71,7 +74,7 @@ public class XbbFormApi {
         JSONObject data = new JSONObject();
         data.put("formId", formId);
         //调用xbbApi方法， 发起API请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.FORM.GET, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.FORM.GET, data, ApiType.READ);
         //对返回值进行解析
         JSONObject responseJson;
         try {

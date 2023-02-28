@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
+import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.model.DingTalkUser;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.user.XbbUserListResponse;
@@ -43,7 +44,7 @@ public class XbbUserApi {
         Optional.ofNullable(page).ifPresent(_0 -> data.put("page", _0));
         Optional.ofNullable(pageSize).ifPresent(_0 -> data.put("pageSize", _0));
         //调用xbbApi方法，发起接口请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.USER.LIST, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.USER.LIST, data, ApiType.READ);
         //对返回值进行解析
         XbbResponse<XbbUserListResponse> xbbResponse;
         try {

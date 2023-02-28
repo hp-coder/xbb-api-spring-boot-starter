@@ -8,6 +8,7 @@ import com.luban.xbongbong.api.biz.config.XbbBizConfig;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.helper.enums.XbbFormConditionSymbol;
 import com.luban.xbongbong.api.helper.enums.XbbSubBusinessType;
+import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.XbbFormCondition;
 import com.luban.xbongbong.api.model.XbbResponse;
@@ -20,10 +21,11 @@ import java.util.*;
 
 /**
  * 客户模块
+ * @author hp
  */
 public class XbbCustomerApi {
 
-    private XbbCustomerApi(){
+    private XbbCustomerApi() {
         throw new AssertionError();
     }
 
@@ -47,12 +49,11 @@ public class XbbCustomerApi {
      *
      * @param dataId 客户数据id
      * @return 客户数据，具体字段参考 resources/detail.json
-     * @throws Exception
      */
     public static XbbCustomerDetailResponse get(@NonNull Long dataId) throws Exception {
         JSONObject data = new JSONObject();
         data.put("dataId", dataId);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.GET, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.GET, data, ApiType.READ);
         XbbResponse<XbbCustomerDetailResponse> xbbResponse;
         try {
             xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomerDetailResponse>>() {
@@ -70,9 +71,7 @@ public class XbbCustomerApi {
     /**
      * 通过系统的用户ID来查询 *
      *
-     * @param userId
      * @return 客户数据，具体字段参考 resources/detail.json
-     * @throws Exception
      */
     public static XbbCustomerDetailResponse getByUserId(@NonNull Long formId, @NonNull String userIdField, @NonNull Long userId) throws Exception {
         final XbbFormCondition xbbFormCondition = new XbbFormCondition();
@@ -88,12 +87,13 @@ public class XbbCustomerApi {
 
     /**
      * 客户列表接口*
-     * @param formId 表单id
+     *
+     * @param formId     表单id
      * @param conditions 查询条件
-     * @param isPublic 是否公海
-     * @param del 是否删除（回收站）
-     * @param page 页码
-     * @param pageSize 每页记录数
+     * @param isPublic   是否公海
+     * @param del        是否删除（回收站）
+     * @param page       页码
+     * @param pageSize   每页记录数
      * @return 用户数据列表响应
      * @throws Exception 请求异常
      */
@@ -102,12 +102,12 @@ public class XbbCustomerApi {
         JSONObject data = new JSONObject();
         data.put("formId", formId);
         data.put("page", page);
-        Optional.ofNullable(conditions).ifPresent(_0 -> data.put("conditions", conditions));
-        Optional.ofNullable(pageSize).ifPresent(_0 -> data.put("pageSize", _0));
-        Optional.ofNullable(isPublic).ifPresent(_0 -> data.put("isPublic", isPublic ? 1 : 0));
-        Optional.ofNullable(del).ifPresent(_0 -> data.put("del", del ? 1 : 0));
+        Optional.ofNullable(conditions).ifPresent(i -> data.put("conditions", conditions));
+        Optional.ofNullable(pageSize).ifPresent(i -> data.put("pageSize", i));
+        Optional.ofNullable(isPublic).ifPresent(i -> data.put("isPublic", isPublic ? 1 : 0));
+        Optional.ofNullable(del).ifPresent(i -> data.put("del", del ? 1 : 0));
         //调用xbbApi方法，发起接口请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.LIST, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.LIST, data, ApiType.READ);
         //对返回值进行解析
         XbbResponse<XbbCustomerListResponse> xbbResponse;
         try {
@@ -137,7 +137,7 @@ public class XbbCustomerApi {
         data.put("formId", formId);
         data.put("dataList", dataList);
         //调用xbbApi方法，发起API请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.ADD, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.ADD, data, ApiType.WRITE);
         //对返回值进行解析
         return getCustomerAlterDataId(response);
     }
@@ -149,7 +149,7 @@ public class XbbCustomerApi {
         data.put("dataId", dataId);
         data.put("dataList", dataList);
         //调用xbbApi方法，发起API请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.EDIT, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.EDIT, data, ApiType.WRITE);
         //对返回值进行解析
         return getCustomerAlterDataId(response);
     }
@@ -188,7 +188,7 @@ public class XbbCustomerApi {
         data.put("subBusinessType", subBusinessType.getCode());
         data.put("dataIdList", dataIds);
         data.put("businessUserId", managerId);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.DISTRIBUTION, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.DISTRIBUTION, data, ApiType.WRITE);
         //对返回值进行解析
         return booleanResponse(response);
     }
@@ -203,7 +203,7 @@ public class XbbCustomerApi {
     public static boolean backToPublicSea(@NonNull List<Long> dataIds) {
         JSONObject data = new JSONObject();
         data.put("dataIdList", dataIds);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.BACK_TO_PUBLIC_SEA, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.BACK_TO_PUBLIC_SEA, data, ApiType.WRITE);
         //对返回值进行解析
         return booleanResponse(response);
     }
@@ -219,7 +219,7 @@ public class XbbCustomerApi {
         JSONObject data = new JSONObject();
         data.put("businessUserIdList", dingTalkUserIds);
         data.put("dataId", dataId);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.OWNER_REMOVE, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.OWNER_REMOVE, data, ApiType.WRITE);
         //对返回值进行解析
         return booleanResponse(response);
     }
@@ -237,7 +237,7 @@ public class XbbCustomerApi {
         JSONObject data = new JSONObject();
         data.put("businessUserId", dingTalkUserId);
         data.put("dataIdList", dataIds);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.HANDOVER, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.HANDOVER, data, ApiType.WRITE);
         //对返回值进行解析
         return booleanResponse(response);
     }
@@ -251,7 +251,7 @@ public class XbbCustomerApi {
     public static boolean delete(@NonNull Long dataId) {
         JSONObject data = new JSONObject();
         data.put("dataId", dataId);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.DELETE, data);
+        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.DELETE, data, ApiType.WRITE);
         //对返回值进行解析
         XbbResponse<XbbCustomerDeleteResponse> xbbResponse;
         try {

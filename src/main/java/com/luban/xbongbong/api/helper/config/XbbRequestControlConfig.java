@@ -1,16 +1,10 @@
 package com.luban.xbongbong.api.helper.config;
 
 import cn.hutool.extra.spring.SpringUtil;
-import org.springframework.data.redis.core.StringRedisTemplate;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import com.luban.xbongbong.api.helper.enums.api.ApiType;
+import org.redisson.api.RRateLimiter;
+import org.redisson.api.RedissonClient;
+import org.springframework.util.Assert;
 
 /**
  * @author HP 2023/1/11
@@ -18,43 +12,35 @@ import java.util.concurrent.TimeUnit;
 
 public class XbbRequestControlConfig {
 
-    private static StringRedisTemplate redisTemplate;
-
-    public static final List<String> NON_WRITE_SUFFIX = Arrays.asList("get", "list", "detail");
-
-    public static boolean proceed(String url) {
-        redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
-        final Long day = Optional.ofNullable(redisTemplate.opsForValue().increment(ConfigConstant.REDIS_REQUEST_PER_DAY)).orElse(0L);
-        setCache(day, ConfigConstant.REDIS_REQUEST_PER_DAY, getRestOfTheDayToMill(), TimeUnit.MILLISECONDS);
-        if (day >= ConfigConstant.REQUEST_PER_DAY) {
-            return false;
+    public static boolean proceed(ApiType apiType) {
+        synchronized (XbbRequestControlConfig.class) {
+            final ApiType localType = apiType == null ? ApiType.READ : apiType;
+            final RedissonClient redissonClient = SpringUtil.getBean(RedissonClient.class);
+            final RRateLimiter requestPerDayLimiter = redissonClient.getRateLimiter("xbb-api-request-per-day-limitor");
+            final RRateLimiter requestPerMinuteLimiter = redissonClient.getRateLimiter("xbb-api-request-per-minute-limitor");
+            final RRateLimiter writePerSecondLimiter = redissonClient.getRateLimiter("xbb-api-write-per-second-limitor");
+            if (requestPerDayLimiter == null || requestPerMinuteLimiter == null || writePerSecondLimiter == null) {
+                return true;
+            }
+            final boolean read = localType.equals(ApiType.READ);
+            final boolean write = localType.equals(ApiType.WRITE);
+            if (read) {
+                Assert.isTrue(requestPerDayLimiter.tryAcquire(1), () -> {
+                    throw new IllegalStateException("尝试获取每日请求数量失败，当日应终止调用");
+                });
+                return requestPerMinuteLimiter.tryAcquire(1);
+            }
+            if (write) {
+                Assert.isTrue(requestPerDayLimiter.tryAcquire(1), () -> {
+                    throw new IllegalStateException("尝试获取每日请求数量失败，当日应终止调用");
+                });
+                final boolean second = requestPerMinuteLimiter.tryAcquire(1);
+                if (!second) {
+                    return false;
+                }
+                return writePerSecondLimiter.tryAcquire(1);
+            }
         }
-        //TODO 要调整成生产消费者模式
-//        final Long minute = redisTemplate.opsForValue().increment(ConfigConstant.REDIS_REQUEST_PER_MINUTE);
-//        setCache(minute, ConfigConstant.REDIS_REQUEST_PER_MINUTE, 1L, TimeUnit.MINUTES);
-//        if (minute >= ConfigConstant.REQUEST_PER_MINUTE) {
-//            return false;
-//        }
-//        if (!NON_WRITE_SUFFIX.contains(url.substring(url.lastIndexOf("/")))) {
-//            final Long second = redisTemplate.opsForValue().increment(ConfigConstant.REDIS_WRITE_PER_SECOND);
-//            setCache(second, ConfigConstant.REDIS_WRITE_PER_SECOND, 1L, TimeUnit.SECONDS);
-//            if (second >= ConfigConstant.WRITE_PER_SECOND) {
-//                return false;
-//            }
-//        }
-        return true;
+        throw new IllegalStateException("无对应接口类型");
     }
-
-    protected static void setCache(Long count, String key, Long time, TimeUnit unit) {
-        if (count == 1) {
-            redisTemplate.expire(key, time, unit);
-        }
-    }
-
-    protected static Long getRestOfTheDayToMill() {
-        return LocalDateTime.of(LocalDate.now(), LocalTime.MAX).atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli()
-                -
-                LocalDateTime.now().atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
-    }
-
 }
