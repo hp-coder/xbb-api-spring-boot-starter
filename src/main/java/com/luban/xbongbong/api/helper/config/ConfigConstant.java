@@ -309,7 +309,12 @@ public class ConfigConstant implements SmartInitializingSingleton {
     public static String xbbApi(String url, JSONObject data, ApiType apiType) throws XbbException {
         log.debug("Xbb API Request Payload: {}", data.toJSONString());
         if (ENABLE_REQUEST_CONTROL && !XbbRequestControlConfig.proceed(apiType)) {
-            xbbApi(url, data, apiType);
+            try {
+                Thread.sleep(200);
+                xbbApi(url, data, apiType);
+            } catch (InterruptedException ignore) {
+                log.error(ignore.getLocalizedMessage());
+            }
         }
         try {
             data.put("corpid", ConfigConstant.CORP_ID);
