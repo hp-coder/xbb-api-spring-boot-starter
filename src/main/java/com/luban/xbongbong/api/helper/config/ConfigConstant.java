@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Optional;
 
 /**
@@ -323,6 +325,7 @@ public class ConfigConstant implements SmartInitializingSingleton {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
             headers.set("sign", sign);
             HttpEntity<String> entity = new HttpEntity<>(data.toJSONString(), headers);
 
