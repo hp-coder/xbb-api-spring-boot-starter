@@ -2,14 +2,14 @@ package com.luban.xbongbong.api.helper.config;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.luban.xbongbong.api.helper.enums.api.ApiType;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RedissonClient;
-import org.springframework.util.Assert;
 
 /**
  * @author HP 2023/1/11
  */
-
+@Slf4j
 public class XbbRequestControlConfig {
 
     public static boolean proceed(ApiType apiType) {
@@ -25,20 +25,36 @@ public class XbbRequestControlConfig {
             final boolean read = localType.equals(ApiType.READ);
             final boolean write = localType.equals(ApiType.WRITE);
             if (read) {
-                Assert.isTrue(requestPerDayLimiter.tryAcquire(1), () -> {
+                try {
+                    requestPerDayLimiter.acquire();
+                } catch (Exception e) {
+                    log.error("requestPerDayLimiter error", e);
                     throw new IllegalStateException("尝试获取每日请求数量失败，当日应终止调用");
-                });
-                return requestPerMinuteLimiter.tryAcquire(1);
-            }
-            if (write) {
-                Assert.isTrue(requestPerDayLimiter.tryAcquire(1), () -> {
-                    throw new IllegalStateException("尝试获取每日请求数量失败，当日应终止调用");
-                });
-                final boolean second = requestPerMinuteLimiter.tryAcquire(1);
-                if (!second) {
+                }
+                try {
+                    requestPerMinuteLimiter.acquire();
+                } catch (Exception e) {
+                    log.error("尝试获取请求数量失败, 这里的异常为分钟限流未获取到ticket, 返回false递归重试");
                     return false;
                 }
-                return writePerSecondLimiter.tryAcquire(1);
+                return true;
+            }
+            if (write) {
+                try {
+                    requestPerDayLimiter.acquire();
+                } catch (Exception e) {
+                    log.error("requestPerDayLimiter error", e);
+                    throw new IllegalStateException("尝试获取每日请求数量失败，当日应终止调用");
+                }
+
+                try {
+                    requestPerMinuteLimiter.acquire();
+                    writePerSecondLimiter.acquire();
+                } catch (Exception e) {
+                    log.error("尝试获取请求数量失败, 这里的异常为分钟或秒级限流未获取到ticket, 返回false递归重试");
+                    return false;
+                }
+                return true;
             }
         }
         throw new IllegalStateException("无对应接口类型");
