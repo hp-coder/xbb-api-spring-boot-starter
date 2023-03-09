@@ -9,7 +9,9 @@ import lombok.NonNull;
 
 /**
  * @author HP 2023/1/9
+ * @deprecated The API that requires the class was deprecated.
  */
+@Deprecated
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

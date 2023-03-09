@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
  * 对鲁班的业务接口 *
  * Non-instantiable utility class
  * @author HP 2023/1/6
+ * @deprecated The original usage was deprecated. Do not use this class in future versions
  */
+@Deprecated
 public class XbbLubanBizApi {
     /**
      * Suppress default constructor for non-instantiability
