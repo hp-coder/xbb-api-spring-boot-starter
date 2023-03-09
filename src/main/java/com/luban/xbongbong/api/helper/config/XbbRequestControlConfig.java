@@ -1,6 +1,7 @@
 package com.luban.xbongbong.api.helper.config;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.luban.xbongbong.api.XbbApiAutoConfiguration;
 import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RRateLimiter;
@@ -16,9 +17,9 @@ public class XbbRequestControlConfig {
         synchronized (XbbRequestControlConfig.class) {
             final ApiType localType = apiType == null ? ApiType.READ : apiType;
             final RedissonClient redissonClient = SpringUtil.getBean(RedissonClient.class);
-            final RRateLimiter requestPerDayLimiter = redissonClient.getRateLimiter("xbb-api-request-per-day-limitor");
-            final RRateLimiter requestPerMinuteLimiter = redissonClient.getRateLimiter("xbb-api-request-per-minute-limitor");
-            final RRateLimiter writePerSecondLimiter = redissonClient.getRateLimiter("xbb-api-write-per-second-limitor");
+            final RRateLimiter requestPerDayLimiter = redissonClient.getRateLimiter(XbbApiAutoConfiguration.REQUEST_PER_DAY_LIMITER);
+            final RRateLimiter requestPerMinuteLimiter = redissonClient.getRateLimiter(XbbApiAutoConfiguration.REQUEST_PER_MINUTE_LIMITER);
+            final RRateLimiter writePerSecondLimiter = redissonClient.getRateLimiter(XbbApiAutoConfiguration.WRITE_PER_SECOND_LIMITER);
             if (requestPerDayLimiter == null || requestPerMinuteLimiter == null || writePerSecondLimiter == null) {
                 return true;
             }
