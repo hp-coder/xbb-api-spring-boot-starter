@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.luban.xbongbong.api.biz.config.XbbBizConfig;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.helper.enums.XbbFormConditionSymbol;
 import com.luban.xbongbong.api.helper.enums.XbbSubBusinessType;
@@ -21,9 +20,12 @@ import java.util.*;
 
 /**
  * 客户模块
+ *
  * @author hp
  */
 public class XbbCustomerApi {
+
+    private static final Long CUSTOMER_FORM_ID = 7174754L;
 
     private XbbCustomerApi() {
         throw new AssertionError();
@@ -35,7 +37,7 @@ public class XbbCustomerApi {
         List<XbbCustomerListResponse.XbbCustomer> list = null;
         int page = 1;
         do {
-            final XbbCustomerListResponse response = XbbCustomerApi.list(XbbBizConfig.CUSTOMER_FORM_ID, conditions, null, null, page++, 100);
+            final XbbCustomerListResponse response = XbbCustomerApi.list(CUSTOMER_FORM_ID, conditions, null, null, page++, 100);
             if (response != null) {
                 list = response.getList();
                 total.addAll(list);

@@ -1,7 +1,6 @@
 package com.luban.xbongbong.api;
 
 import cn.hutool.extra.spring.EnableSpringUtil;
-import com.luban.xbongbong.api.biz.config.XbbBizConfig;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
@@ -25,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableScheduling
 @Configuration
 @EnableConfigurationProperties
-@Import({XbbBizConfig.class, ConfigConstant.class})
+@Import({ConfigConstant.class})
 public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
 
     @Autowired
