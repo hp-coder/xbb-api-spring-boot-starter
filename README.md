@@ -16,7 +16,7 @@ mvn clean install
 <dependency>
     <groupId>com.luban</groupId>
     <artifactId>xbb-api-spring-boot-starter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 </dependency>
 ```
 ### Springboot配置
