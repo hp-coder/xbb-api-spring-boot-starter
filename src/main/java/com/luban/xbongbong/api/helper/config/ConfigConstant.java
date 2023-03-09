@@ -5,8 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.helper.utils.DigestUtil;
+import com.luban.xbongbong.api.model.XbbResponse;
+import com.luban.xbongbong.api.model.request.XbbApiRequestModel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -43,38 +44,34 @@ public class ConfigConstant implements SmartInitializingSingleton {
     private Long requestPerDay;
     private Long requestPerMinute;
     private Long writePerSecond;
+    private Integer maxRetry;
 
     /**
      * 销帮帮接口根域名
      */
-    @NonNull
     public static String XBB_API_ROOT;
 
     /**
      * 本公司corpid。接口基础参数，接口请求必传
-     * 管理员账号登录销帮帮WEB版后台后，访问 https://pfweb.xbongbong.com/#/apiToken/index 查看
+     * 管理员账号登录销帮帮WEB版后台后，访问 <a href="https://pfweb.xbongbong.com/#/apiToken/index">...</a> 查看
      */
-    @NonNull
     public static String CORP_ID;
 
     /**
      * 本公司访问接口的token,该值相当于密钥，请妥善保管，不要泄露，可以下列url中重置token
-     * 管理员账号登录销帮帮WEB版后台后，访问 https://pfweb.xbongbong.com/#/apiToken/index 查看
+     * 管理员账号登录销帮帮WEB版后台后，访问 <a href="https://pfweb.xbongbong.com/#/apiToken/index">...</a> 查看
      */
-    @NonNull
     public static String TOKEN;
 
     /**
      * webhook的校验token*
-     * 管理员账号登录销帮帮WEB版后台后，访问 https://pfweb.xbongbong.com/#/apiToken/index 查看*
+     * 管理员账号登录销帮帮WEB版后台后，访问 <a href="https://pfweb.xbongbong.com/#/apiToken/index">...</a> 查看*
      */
-    @NonNull
     public static String WEBHOOK_TOKEN;
 
     /**
      * 接口操作人userId,接口基础参数。不传默认取超管角色
      */
-    @NonNull
     public static String USER_ID;
 
     /**
@@ -96,6 +93,8 @@ public class ConfigConstant implements SmartInitializingSingleton {
      * 每秒最多写次数，必须小于3*
      */
     public static Long WRITE_PER_SECOND = 0L;
+
+    public static Integer MAX_RETRY = 3;
 
     /**
      * 每天调用接口次数限制的缓存key*
@@ -310,15 +309,25 @@ public class ConfigConstant implements SmartInitializingSingleton {
      */
     public static String xbbApi(String url, JSONObject data, ApiType apiType) throws XbbException {
         log.debug("Xbb API Request Payload: {}", data.toJSONString());
-        if (ENABLE_REQUEST_CONTROL && !XbbRequestControlConfig.proceed(apiType)) {
+        try {
+            return xbbApi(new XbbApiRequestModel(url, data, apiType, MAX_RETRY));
+        } catch (IllegalArgumentException | XbbException e) {
+            return JSONObject.toJSONString(new XbbResponse<>(-1, e.getLocalizedMessage(), false, null));
+        }
+    }
+
+    private static String xbbApi(XbbApiRequestModel requestModel) throws XbbException, IllegalArgumentException {
+        if (ENABLE_REQUEST_CONTROL && !XbbRequestControlConfig.proceed(requestModel.getApiType()) && requestModel.retry()) {
+            log.info("销帮帮请求重试：{}", requestModel.getRetry());
             try {
-                Thread.sleep(200);
-                xbbApi(url, data, apiType);
-            } catch (InterruptedException ignore) {
-                log.error(ignore.getLocalizedMessage());
+                Thread.sleep(300);
+                xbbApi(requestModel);
+            } catch (InterruptedException e) {
+                log.error("销帮帮请求异常: interrupted,{}", e.getLocalizedMessage());
             }
         }
         try {
+            final JSONObject data = requestModel.getData();
             data.put("corpid", ConfigConstant.CORP_ID);
             data.put("userId", ConfigConstant.USER_ID);
             String sign = ConfigConstant.getDataSign(data, TOKEN);
@@ -329,7 +338,7 @@ public class ConfigConstant implements SmartInitializingSingleton {
             headers.set("sign", sign);
             HttpEntity<String> entity = new HttpEntity<>(data.toJSONString(), headers);
 
-            final String response =  SpringUtil.getBean(RestTemplate.class).postForObject(ConfigConstant.getApiUrl(url), entity, String.class);
+            final String response = SpringUtil.getBean(RestTemplate.class).postForObject(ConfigConstant.getApiUrl(requestModel.getUrl()), entity, String.class);
             log.debug("response: {}", response);
             return response;
         } catch (Exception e) {
@@ -362,6 +371,12 @@ public class ConfigConstant implements SmartInitializingSingleton {
                 throw new RuntimeException("每秒写请求最大不能超过" + MAX_WRITE_REQUEST_PER_SECOND + "次");
             });
             WRITE_PER_SECOND = writePerSecond;
+        });
+        Optional.ofNullable(maxRetry).ifPresent(i -> {
+            Assert.isTrue(i <= 10, () -> {
+                throw new RuntimeException("最大重试次数不能大于10" + MAX_WRITE_REQUEST_PER_SECOND + "次");
+            });
+            MAX_RETRY = maxRetry;
         });
     }
 }

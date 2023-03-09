@@ -13,6 +13,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
@@ -31,6 +32,8 @@ public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
     private RedissonClient redissonClient;
     @Autowired
     private ConfigConstant configConstant;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     public static final String WRITE_PER_SECOND_LIMITER = "xbb-api-write-per-second-limiter";
     public static final String REQUEST_PER_MINUTE_LIMITER = "xbb-api-request-per-minute-limiter";
@@ -43,6 +46,7 @@ public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
 
     @Override
     public void afterSingletonsInstantiated() {
+        removeLimiters();
         final RRateLimiter second = redissonClient.getRateLimiter(WRITE_PER_SECOND_LIMITER);
         second.trySetRate(RateType.OVERALL, configConstant.getWritePerSecond(), 1, RateIntervalUnit.SECONDS);
 
@@ -51,6 +55,12 @@ public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
 
         final RRateLimiter day = redissonClient.getRateLimiter(REQUEST_PER_DAY_LIMITER);
         day.trySetRate(RateType.OVERALL, configConstant.getRequestPerDay(), 1, RateIntervalUnit.DAYS);
+    }
+
+    private void removeLimiters() {
+        redisTemplate.delete(WRITE_PER_SECOND_LIMITER);
+        redisTemplate.delete(REQUEST_PER_MINUTE_LIMITER);
+        redisTemplate.delete(REQUEST_PER_DAY_LIMITER);
     }
 
     @Scheduled(cron = "20 0 0 * * ?")
