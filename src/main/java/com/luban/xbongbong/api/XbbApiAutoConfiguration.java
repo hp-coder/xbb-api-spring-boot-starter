@@ -3,10 +3,7 @@ package com.luban.xbongbong.api;
 import cn.hutool.extra.spring.EnableSpringUtil;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RRateLimiter;
-import org.redisson.api.RateIntervalUnit;
-import org.redisson.api.RateType;
-import org.redisson.api.RedissonClient;
+import org.redisson.api.*;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,6 +14,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author HP 2022/12/27
@@ -39,6 +38,8 @@ public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
     public static final String WRITE_PER_SECOND_LIMITER = "xbb-api-write-per-second-limiter";
     public static final String REQUEST_PER_MINUTE_LIMITER = "xbb-api-request-per-minute-limiter";
     public static final String REQUEST_PER_DAY_LIMITER = "xbb-api-request-per-day-limiter";
+
+    public static final String LIMITER_VALUE_FORMATTER = "{%s}:value";
 
     @Bean
     public RestTemplate restTemplate() {
@@ -70,5 +71,12 @@ public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
         final RRateLimiter day = redissonClient.getRateLimiter(REQUEST_PER_DAY_LIMITER);
         day.trySetRate(RateType.OVERALL, configConstant.getRequestPerDay(), 1, RateIntervalUnit.DAYS);
         log.info("xbb request daily request limiter has been reset");
+
+        final String key = String.format(LIMITER_VALUE_FORMATTER, REQUEST_PER_DAY_LIMITER);
+        final RKeys keys = redissonClient.getKeys();
+        if (keys.countExists(key) > 0) {
+            keys.expire(key, 1, TimeUnit.DAYS);
+        }
+        log.info("xbb request daily request limiter's value has been reset");
     }
 }
