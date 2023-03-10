@@ -2,6 +2,7 @@ package com.luban.xbongbong.api;
 
 import cn.hutool.extra.spring.EnableSpringUtil;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
@@ -20,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author HP 2022/12/27
  */
+@Slf4j
 @EnableSpringUtil
 @EnableScheduling
 @Configuration
@@ -64,7 +66,9 @@ public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
 
     @Scheduled(cron = "20 0 0 * * ?")
     public void resetLimiter() {
+        log.info("xbb request daily request limiter reset starts now...");
         final RRateLimiter day = redissonClient.getRateLimiter(REQUEST_PER_DAY_LIMITER);
         day.trySetRate(RateType.OVERALL, configConstant.getRequestPerDay(), 1, RateIntervalUnit.DAYS);
+        log.info("xbb request daily request limiter has been reset");
     }
 }
