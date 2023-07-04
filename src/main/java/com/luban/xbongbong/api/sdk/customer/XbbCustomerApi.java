@@ -11,7 +11,12 @@ import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.XbbFormCondition;
 import com.luban.xbongbong.api.model.XbbResponse;
-import com.luban.xbongbong.api.model.customer.*;
+import com.luban.xbongbong.api.model.common.detail.XbbDetailModel;
+import com.luban.xbongbong.api.model.common.list.XbbListModel;
+import com.luban.xbongbong.api.model.common.page.XbbPageResponse;
+import com.luban.xbongbong.api.model.customer.XbbCustomerAlterResponse;
+import com.luban.xbongbong.api.model.customer.XbbCustomerCommonResponse;
+import com.luban.xbongbong.api.model.customer.XbbCustomerDeleteResponse;
 import lombok.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -32,12 +37,12 @@ public class XbbCustomerApi {
     }
 
 
-    public static List<XbbCustomerListResponse.XbbCustomer> recursivelyGetCustomersByConditions(List<XbbFormCondition> conditions) throws Exception {
-        List<XbbCustomerListResponse.XbbCustomer> total = new ArrayList<>();
-        List<XbbCustomerListResponse.XbbCustomer> list = null;
+    public static List<XbbListModel> recursivelyGetCustomersByConditions(List<XbbFormCondition> conditions) throws Exception {
+        List<XbbListModel> total = new ArrayList<>();
+        List<XbbListModel> list = null;
         int page = 1;
         do {
-            final XbbCustomerListResponse response = XbbCustomerApi.list(CUSTOMER_FORM_ID, conditions, null, null, page++, 100);
+            final XbbPageResponse response = XbbCustomerApi.list(CUSTOMER_FORM_ID, conditions, null, null, page++, 100);
             if (response != null) {
                 list = response.getList();
                 total.addAll(list);
@@ -52,22 +57,8 @@ public class XbbCustomerApi {
      * @param dataId 客户数据id
      * @return 客户数据，具体字段参考 resources/detail.json
      */
-    public static XbbCustomerDetailResponse get(@NonNull Long dataId) throws Exception {
-        JSONObject data = new JSONObject();
-        data.put("dataId", dataId);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.GET, data, ApiType.READ);
-        XbbResponse<XbbCustomerDetailResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomerDetailResponse>>() {
-            });
-        } catch (Exception e) {
-            throw new Exception("json解析出错", e);
-        }
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            return xbbResponse.getResult();
-        } else {
-            throw new Exception(xbbResponse.getMsg());
-        }
+    public static XbbDetailModel get(@NonNull Long dataId) throws Exception {
+        return ConfigConstant.get(dataId, ConfigConstant.CUSTOMER.GET);
     }
 
     /**
@@ -75,12 +66,12 @@ public class XbbCustomerApi {
      *
      * @return 客户数据，具体字段参考 resources/detail.json
      */
-    public static XbbCustomerDetailResponse getByUserId(@NonNull Long formId, @NonNull String userIdField, @NonNull Long userId) throws Exception {
+    public static XbbDetailModel getByUserId(@NonNull Long formId, @NonNull String userIdField, @NonNull Long userId) throws Exception {
         final XbbFormCondition xbbFormCondition = new XbbFormCondition();
         xbbFormCondition.setAttr(userIdField);
         xbbFormCondition.setSymbol(XbbFormConditionSymbol.eq);
         xbbFormCondition.setValue(Collections.singletonList(userId));
-        final XbbCustomerListResponse response = list(formId, Collections.singletonList(xbbFormCondition), null, null, 1, 1);
+        final XbbPageResponse response = list(formId, Collections.singletonList(xbbFormCondition), null, null, 1, 1);
         if (response == null || CollectionUtils.isEmpty(response.getList())) {
             return null;
         }
@@ -99,7 +90,7 @@ public class XbbCustomerApi {
      * @return 用户数据列表响应
      * @throws Exception 请求异常
      */
-    public static XbbCustomerListResponse list(@NonNull Long formId, List<XbbFormCondition> conditions, Boolean isPublic, Boolean del, int page, Integer pageSize) throws Exception {
+    public static XbbPageResponse list(@NonNull Long formId, List<XbbFormCondition> conditions, Boolean isPublic, Boolean del, int page, Integer pageSize) throws Exception {
         //创建参数data
         JSONObject data = new JSONObject();
         data.put("formId", formId);
@@ -111,9 +102,9 @@ public class XbbCustomerApi {
         //调用xbbApi方法，发起接口请求
         String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOMER.LIST, data, ApiType.READ);
         //对返回值进行解析
-        XbbResponse<XbbCustomerListResponse> xbbResponse;
+        XbbResponse<XbbPageResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomerListResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);
@@ -159,7 +150,7 @@ public class XbbCustomerApi {
     private static Long getCustomerAlterDataId(String response) {
         XbbResponse<XbbCustomerAlterResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomerAlterResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new XbbException(-1, "json解析出错");
@@ -257,7 +248,7 @@ public class XbbCustomerApi {
         //对返回值进行解析
         XbbResponse<XbbCustomerDeleteResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomerDeleteResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new XbbException(-1, "json解析出错");
@@ -280,7 +271,7 @@ public class XbbCustomerApi {
     private static boolean booleanResponse(String response) {
         XbbResponse<XbbCustomerCommonResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomerCommonResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new XbbException(-1, "json解析出错");

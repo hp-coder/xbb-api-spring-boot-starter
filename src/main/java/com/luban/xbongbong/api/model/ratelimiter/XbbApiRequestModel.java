@@ -1,4 +1,4 @@
-package com.luban.xbongbong.api.model.request;
+package com.luban.xbongbong.api.model.ratelimiter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.luban.xbongbong.api.helper.enums.api.ApiType;

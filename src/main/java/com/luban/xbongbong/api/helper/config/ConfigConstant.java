@@ -1,13 +1,17 @@
 package com.luban.xbongbong.api.helper.config;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.helper.utils.DigestUtil;
 import com.luban.xbongbong.api.model.XbbResponse;
-import com.luban.xbongbong.api.model.request.XbbApiRequestModel;
+import com.luban.xbongbong.api.model.common.detail.XbbDetailModel;
+import com.luban.xbongbong.api.model.ratelimiter.XbbApiRequestModel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -21,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -129,6 +134,20 @@ public class ConfigConstant implements SmartInitializingSingleton {
      * 接口校验值
      */
     public static final String REQUEST_HEADER_SIGN = "sign";
+
+
+    public enum PAYMENT_SHEET {
+        ;
+        /**
+         * 回款单列表
+         */
+        public static final String LIST = "/pro/v2/api/paymentSheet/list";
+
+        /**
+         * 回款单详情
+         */
+        public static final String GET = "/pro/v2/api/customer/detail";
+    }
 
     /**
      * 表单模块接口地址
@@ -300,6 +319,26 @@ public class ConfigConstant implements SmartInitializingSingleton {
         return DigestUtil.Encrypt(data + token, "SHA-256");
     }
 
+
+    public static XbbDetailModel get(@NonNull Long dataId, @NonNull String url) throws Exception {
+        JSONObject data = new JSONObject();
+        data.put("dataId", dataId);
+        String response = ConfigConstant.xbbApi(url, data, ApiType.READ);
+        XbbResponse<XbbDetailModel> xbbResponse;
+        try {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            throw new Exception("json解析出错", e);
+        }
+        if (Objects.equals(xbbResponse.getCode(), 1)) {
+            return xbbResponse.getResult();
+        } else {
+            throw new Exception(xbbResponse.getMsg());
+        }
+    }
+
+
     /**
      * 调用xbb api，生成签名 ，发起HTTP POST请求
      *
@@ -329,7 +368,8 @@ public class ConfigConstant implements SmartInitializingSingleton {
         try {
             final JSONObject data = requestModel.getData();
             data.put("corpid", ConfigConstant.CORP_ID);
-            data.put("userId", ConfigConstant.USER_ID);
+            //暂时去掉
+//            data.put("userId", ConfigConstant.USER_ID);
             String sign = ConfigConstant.getDataSign(data, TOKEN);
 
             HttpHeaders headers = new HttpHeaders();

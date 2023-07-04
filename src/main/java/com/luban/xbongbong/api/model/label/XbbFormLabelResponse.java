@@ -3,6 +3,7 @@ package com.luban.xbongbong.api.model.label;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.luban.xbongbong.api.helper.deserializer.XbbBizTypeDeserializer;
 import com.luban.xbongbong.api.helper.enums.XbbBizType;
+import com.luban.xbongbong.api.model.Response;
 import lombok.Data;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * @author HP 2023/2/2
  */
 @Data
-public class XbbFormLabelResponse {
+public class XbbFormLabelResponse implements Response {
 
     private List<LabelGroup> labelTree;
 

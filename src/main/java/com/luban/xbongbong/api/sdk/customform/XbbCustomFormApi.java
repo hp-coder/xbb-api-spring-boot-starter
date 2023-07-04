@@ -1,4 +1,4 @@
-package com.luban.xbongbong.api.sdk.custom_form;
+package com.luban.xbongbong.api.sdk.customform;
 
 import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSON;
@@ -9,10 +9,10 @@ import com.luban.xbongbong.api.helper.enums.XbbFormType;
 import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.model.XbbFormCondition;
 import com.luban.xbongbong.api.model.XbbResponse;
-import com.luban.xbongbong.api.model.custom_form.XbbCustomFormAlterResponse;
-import com.luban.xbongbong.api.model.custom_form.XbbCustomFormDeleteResponse;
-import com.luban.xbongbong.api.model.custom_form.XbbCustomFormDetailResponse;
-import com.luban.xbongbong.api.model.custom_form.XbbCustomFormListResponse;
+import com.luban.xbongbong.api.model.common.detail.XbbDetailModel;
+import com.luban.xbongbong.api.model.customform.XbbCustomFormAlterResponse;
+import com.luban.xbongbong.api.model.customform.XbbCustomFormDeleteResponse;
+import com.luban.xbongbong.api.model.customform.XbbCustomFormListResponse;
 import com.luban.xbongbong.api.model.form.XbbFormListResponse;
 import com.luban.xbongbong.api.sdk.form.XbbFormApi;
 import lombok.NonNull;
@@ -104,7 +104,7 @@ public class XbbCustomFormApi {
     private static XbbCustomFormAlterResponse getXbbCustomFormAlterResponse(String response) throws Exception {
         XbbResponse<XbbCustomFormAlterResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomFormAlterResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);
@@ -138,7 +138,7 @@ public class XbbCustomFormApi {
         String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOM_FORM.LIST, data, ApiType.READ);
         XbbResponse<XbbCustomFormListResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomFormListResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);
@@ -157,22 +157,8 @@ public class XbbCustomFormApi {
      * @return XbbCustomFormDetailResponse 详情
      * @throws Exception 请求异常
      */
-    public static XbbCustomFormDetailResponse get(@NonNull Long dataId) throws Exception {
-        JSONObject data = new JSONObject();
-        data.put("dataId", dataId);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOM_FORM.GET, data, ApiType.READ);
-        XbbResponse<XbbCustomFormDetailResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomFormDetailResponse>>() {
-            });
-        } catch (Exception e) {
-            throw new Exception("json解析出错", e);
-        }
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            return xbbResponse.getResult();
-        } else {
-            throw new Exception(xbbResponse.getMsg());
-        }
+    public static XbbDetailModel get(@NonNull Long dataId) throws Exception {
+        return ConfigConstant.get(dataId, ConfigConstant.CUSTOM_FORM.GET);
     }
 
     /**
@@ -188,7 +174,7 @@ public class XbbCustomFormApi {
         String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOM_FORM.DELETE, data, ApiType.WRITE);
         XbbResponse<XbbCustomFormDeleteResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbCustomFormDeleteResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);

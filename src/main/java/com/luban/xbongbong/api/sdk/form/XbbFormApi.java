@@ -45,7 +45,7 @@ public class XbbFormApi {
         //对返回值进行解析
         XbbResponse<XbbFormListResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbFormListResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);
