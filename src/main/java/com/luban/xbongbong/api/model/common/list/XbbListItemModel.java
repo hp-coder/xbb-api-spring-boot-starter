@@ -11,7 +11,7 @@ import java.util.Optional;
  * @author hp
  */
 @Data
-public class XbbListModel implements Response {
+public class XbbListItemModel implements Response {
     private Long addTime;
     private JSONObject data;
     private Long dataId;

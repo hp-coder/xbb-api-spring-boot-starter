@@ -1,7 +1,7 @@
 package com.luban.xbongbong.api.model.customform;
 
 import com.luban.xbongbong.api.model.Response;
-import com.luban.xbongbong.api.model.common.list.XbbListModel;
+import com.luban.xbongbong.api.model.common.list.XbbListItemModel;
 import lombok.Data;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Data
 public class XbbCustomFormListResponse implements Response {
-    private List<XbbListModel> list;
+    private List<XbbListItemModel> list;
     private Integer totalCount;
     private Integer totalPage;
 }

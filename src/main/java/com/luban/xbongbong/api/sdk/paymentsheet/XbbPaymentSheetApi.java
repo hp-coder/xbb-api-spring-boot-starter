@@ -9,7 +9,7 @@ import com.luban.xbongbong.api.helper.enums.paymentsheet.XbbPaymentSheetGroup;
 import com.luban.xbongbong.api.model.XbbFormCondition;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.common.detail.XbbDetailModel;
-import com.luban.xbongbong.api.model.common.list.XbbListModel;
+import com.luban.xbongbong.api.model.common.list.XbbListItemModel;
 import com.luban.xbongbong.api.model.common.page.XbbPageResponse;
 import lombok.NonNull;
 
@@ -25,7 +25,7 @@ public class XbbPaymentSheetApi {
         throw new AssertionError();
     }
 
-    public static List<XbbListModel> list(List<XbbFormCondition> conditions, XbbPaymentSheetGroup group, Integer page, Integer pageSize) throws Exception {
+    public static List<XbbListItemModel> list(List<XbbFormCondition> conditions, XbbPaymentSheetGroup group, Integer page, Integer pageSize) throws Exception {
         JSONObject data = new JSONObject();
         Optional.ofNullable(conditions).ifPresent(_0 -> data.put("conditions", _0));
         Optional.ofNullable(group).ifPresent(_0 -> data.put("listGroupId", _0.getCode()));
@@ -41,7 +41,7 @@ public class XbbPaymentSheetApi {
         } catch (Exception e) {
             throw new Exception("json解析出错", e);
         }
-        List<XbbListModel> retArray = null;
+        List<XbbListItemModel> retArray = null;
         if (Objects.equals(xbbResponse.getCode(), 1)) {
             final XbbPageResponse result = xbbResponse.getResult();
             if (result != null) {

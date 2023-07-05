@@ -12,7 +12,7 @@ import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.XbbFormCondition;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.common.detail.XbbDetailModel;
-import com.luban.xbongbong.api.model.common.list.XbbListModel;
+import com.luban.xbongbong.api.model.common.list.XbbListItemModel;
 import com.luban.xbongbong.api.model.common.page.XbbPageResponse;
 import com.luban.xbongbong.api.model.customer.XbbCustomerAlterResponse;
 import com.luban.xbongbong.api.model.customer.XbbCustomerCommonResponse;
@@ -37,9 +37,9 @@ public class XbbCustomerApi {
     }
 
 
-    public static List<XbbListModel> recursivelyGetCustomersByConditions(List<XbbFormCondition> conditions) throws Exception {
-        List<XbbListModel> total = new ArrayList<>();
-        List<XbbListModel> list = null;
+    public static List<XbbListItemModel> recursivelyGetCustomersByConditions(List<XbbFormCondition> conditions) throws Exception {
+        List<XbbListItemModel> total = new ArrayList<>();
+        List<XbbListItemModel> list = null;
         int page = 1;
         do {
             final XbbPageResponse response = XbbCustomerApi.list(CUSTOMER_FORM_ID, conditions, null, null, page++, 100);
