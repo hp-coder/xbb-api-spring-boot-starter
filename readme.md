@@ -2,7 +2,10 @@
 
 销帮帮CRM系统API及业务API
 
-`说明：由于销帮帮的关联表单并非通过关联键查询子表单数据，而是通过主键（销帮帮客户记录ID）关联，也就是说主表的记录只能是1，字表是多，无法实现多对多的场景`
+## 说明
+1. 由于销帮帮的关联表单并非通过关联键查询子表单数据，而是通过主键（销帮帮客户记录ID）关联，也就是说主表的记录只能是1，字表是多，无法实现多对多的场景`
+2. **经销帮帮开发反馈, 带审核业务的模块, 其记录在审核通过后可以通过接口查询到, webhook事件回调机制也是一样, 在审核通过后能收到对应模块的事件通知.**
+   1. 然而他们的垃圾文档又不写这些东西
 
 ## 使用
 获取项目并安装
@@ -36,8 +39,8 @@ xbb:
   webhook-token: 9c106a50fb6ee47331f4d97288ccfe51
   enable-request-control: true
   request-per-day: 50000
-  request-per-minute: 500 #暂时没用，还要调整
-  write-per-second: 2 #暂时没用，还要调整
+  request-per-minute: 500
+  write-per-second: 2
   biz:
     open-bid-form-name: "开标记录"
     bid-winning-name: "中标记录"
