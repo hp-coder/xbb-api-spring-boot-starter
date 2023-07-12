@@ -2,6 +2,7 @@ package com.luban.xbongbong.api.model;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.Data;
 
 /**
@@ -9,8 +10,7 @@ import lombok.Data;
  */
 @Data
 public abstract class BaseXbbModel implements Request {
-
-    public JSONObject json(){
-        return JSON.parseObject(JSON.toJSONString(this));
+    public JSONObject json() {
+        return JSON.parseObject(JSON.toJSONString(this, SerializerFeature.PrettyFormat));
     }
 }

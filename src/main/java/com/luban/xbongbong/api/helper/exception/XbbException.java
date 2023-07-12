@@ -4,6 +4,7 @@ import com.luban.xbongbong.api.model.XbbResponse;
 
 /**
  * 销帮帮接口异常
+ * @author hp
  */
 public class XbbException extends RuntimeException {
 

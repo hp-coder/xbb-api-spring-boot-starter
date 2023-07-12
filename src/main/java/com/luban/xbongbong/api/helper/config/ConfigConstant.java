@@ -277,6 +277,14 @@ public class ConfigConstant implements SmartInitializingSingleton {
         public static final String GET = "/pro/v2/api/paas/detail";
     }
 
+    public enum CONTRACT {
+        ;
+        /**
+         * 合同订单详情
+         */
+        public static final String GET = "/pro/v2/api/contract/detail";
+    }
+
     /**
      * 获取接口地址
      *

@@ -1,6 +1,7 @@
 package com.luban.xbongbong.api.controller;
 
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
+import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.WebhookPayload;
 import com.luban.xbongbong.api.processor.XbbWebhookEventProcessor;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +34,14 @@ public class XbbWebhookController {
     @PostMapping("/event/listener")
     public void listener(@RequestBody WebhookPayload payload, @RequestHeader(name = ConfigConstant.REQUEST_HEADER_SIGN) String sign) {
         log.info("Xbb Webhook Request Payload : {}", payload.toString());
-        log.info("Xbb Webhook Request Sign : {}", sign);
+        log.debug("Xbb Webhook Request Sign : {}", sign);
         Assert.isTrue(Objects.equals(ConfigConstant.getDataSign(payload.toString(), ConfigConstant.WEBHOOK_TOKEN), sign), () -> {
-            throw new RuntimeException("验签失败，非法请求");
+            throw new XbbException(-1, "验签失败，非法请求");
         });
-        log.info("Xbb Webhook Request Sign Is Valid");
-        XbbWebhookEventProcessor.PROCESSORS.stream().filter(processor -> processor.proceed().test(payload)).forEach(processor -> executor.execute(() -> processor.process().accept(payload)));
+        log.debug("Xbb Webhook Request Sign Is Valid");
+        XbbWebhookEventProcessor.PROCESSORS
+                .stream()
+                .filter(processor -> processor.proceed().test(payload))
+                .forEach(processor -> executor.execute(() -> processor.process().accept(payload)));
     }
 }
