@@ -146,7 +146,7 @@ public class ConfigConstant implements SmartInitializingSingleton {
         /**
          * 回款单详情
          */
-        public static final String GET = "/pro/v2/api/customer/detail";
+        public static final String GET = "/pro/v2/api/paymentSheet/detail";
     }
 
     /**
