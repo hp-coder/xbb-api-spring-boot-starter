@@ -51,6 +51,8 @@ public class ConfigConstant implements SmartInitializingSingleton {
     private Long writePerSecond;
     private Integer maxRetry;
 
+    private static RestTemplate restTemplate;
+
     /**
      * 销帮帮接口根域名
      */
@@ -384,13 +386,15 @@ public class ConfigConstant implements SmartInitializingSingleton {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
             headers.set("sign", sign);
-            HttpEntity<String> entity = new HttpEntity<>(data.toJSONString(), headers);
-
-            final String response = SpringUtil.getBean(RestTemplate.class).postForObject(ConfigConstant.getApiUrl(requestModel.getUrl()), entity, String.class);
+            final String requestData = data.toJSONString();
+            log.debug("request payload: {}", requestData);
+            HttpEntity<String> entity = new HttpEntity<>(requestData, headers);
+            final String response = restTemplate.postForObject(ConfigConstant.getApiUrl(requestModel.getUrl()), entity, String.class);
             log.debug("response: {}", response);
             return response;
         } catch (Exception e) {
-            throw new XbbException(-1, "http post访问出错");
+            log.error("请求异常", e);
+            throw new XbbException(-1, "请求异常");
         }
     }
 
@@ -426,5 +430,7 @@ public class ConfigConstant implements SmartInitializingSingleton {
             });
             MAX_RETRY = maxRetry;
         });
+
+        restTemplate = SpringUtil.getBean(RestTemplate.class);
     }
 }
