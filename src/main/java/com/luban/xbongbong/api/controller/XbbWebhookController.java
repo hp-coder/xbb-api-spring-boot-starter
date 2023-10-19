@@ -1,5 +1,6 @@
 package com.luban.xbongbong.api.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.WebhookPayload;
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
@@ -26,20 +28,25 @@ import java.util.concurrent.ExecutorService;
 @RequiredArgsConstructor
 @RequestMapping("/xbb/webhook")
 public class XbbWebhookController {
-    /**
-     * TODO 因为回调响应有时间限制，需要考虑业务处理速度问题，是否需要异步还需要设计一下
-     */
+
     private final ExecutorService executor;
+    private final List<XbbWebhookEventProcessor> processors;
 
     @PostMapping("/event/listener")
     public void listener(@RequestBody WebhookPayload payload, @RequestHeader(name = ConfigConstant.REQUEST_HEADER_SIGN) String sign) {
         log.info("Xbb Webhook Request Payload : {}", payload.toString());
         log.debug("Xbb Webhook Request Sign : {}", sign);
-        Assert.isTrue(Objects.equals(ConfigConstant.getDataSign(payload.toString(), ConfigConstant.WEBHOOK_TOKEN), sign), () -> {
-            throw new XbbException(-1, "验签失败，非法请求");
-        });
+        Assert.isTrue(
+                Objects.equals(ConfigConstant.getDataSign(payload.toString(), ConfigConstant.WEBHOOK_TOKEN), sign),
+                () -> {
+                    throw new XbbException(-1, "验签失败，非法请求");
+                }
+        );
         log.debug("Xbb Webhook Request Sign Is Valid");
-        XbbWebhookEventProcessor.PROCESSORS
+        if (CollUtil.isEmpty(processors)) {
+            log.warn("No Xbb Webhook Event Processor Was Found, Though An Event Was Received.");
+        }
+        processors
                 .stream()
                 .filter(processor -> processor.proceed().test(payload))
                 .forEach(processor -> executor.execute(() -> processor.process().accept(payload)));

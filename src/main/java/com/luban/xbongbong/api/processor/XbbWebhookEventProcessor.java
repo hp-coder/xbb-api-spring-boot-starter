@@ -1,26 +1,35 @@
 package com.luban.xbongbong.api.processor;
 
 import com.luban.xbongbong.api.model.WebhookPayload;
-import org.springframework.beans.factory.SmartInitializingSingleton;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * @author HP 2022/12/27
+ * When {@code @ConditionalOnProperty(prefix = "xbb", name = {"token", "gateway", "corp-id", "user-id", "webhook-token"})}
+ * are met,
+ * the endpoint to receive events from XBB is activated.
+ * <p>
+ * To process these events, clients should implement
+ * this interface and make sure they are registered
+ * as beans in the Spring container.
+ *
+ * @author HP
  */
-public interface XbbWebhookEventProcessor extends SmartInitializingSingleton {
+public interface XbbWebhookEventProcessor {
 
-    List<XbbWebhookEventProcessor> PROCESSORS = new ArrayList<>();
-
+    /**
+     * Define how to process an event when proceed() returns TRUE.
+     *
+     * @return process method.
+     */
     Consumer<WebhookPayload> process();
 
+    /**
+     * Whether the implementation of this interface supports
+     * processing an event.
+     *
+     * @return boolean operation.
+     */
     Predicate<WebhookPayload> proceed();
-
-    @Override
-    default void afterSingletonsInstantiated() {
-        PROCESSORS.add(this);
-    }
 }
