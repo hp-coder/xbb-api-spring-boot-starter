@@ -1,6 +1,7 @@
 package com.luban.xbongbong.api.controller;
 
 import cn.hutool.core.collection.CollUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.WebhookPayload;
@@ -12,6 +13,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
@@ -33,8 +35,14 @@ public class XbbWebhookController {
     private final List<XbbWebhookEventProcessor> processors;
 
     @PostMapping("/event/listener")
-    public void listener(@RequestBody WebhookPayload payload, @RequestHeader(name = ConfigConstant.REQUEST_HEADER_SIGN) String sign) {
-        log.info("Xbb Webhook Request Payload : {}", payload.toString());
+    public void listener(
+                         @RequestBody Map<String, Object> originalPayload,
+                         @RequestHeader(name = ConfigConstant.REQUEST_HEADER_SIGN) String sign
+    ) {
+        final String originalJson = JSONObject.toJSONString(originalPayload);
+        log.info("Xbb Webhook Request Original Payload : {}", originalJson);
+        final WebhookPayload payload = JSONObject.parseObject(originalJson, WebhookPayload.class);
+        log.info("Xbb Webhook Request Converted Payload : {}", payload.toString());
         log.debug("Xbb Webhook Request Sign : {}", sign);
         Assert.isTrue(
                 Objects.equals(ConfigConstant.getDataSign(payload.toString(), ConfigConstant.WEBHOOK_TOKEN), sign),
