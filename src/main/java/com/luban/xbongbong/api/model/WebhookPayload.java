@@ -3,14 +3,14 @@ package com.luban.xbongbong.api.model;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.luban.xbongbong.api.helper.deserializer.XbbBizTypeDeserializer;
+import com.luban.xbongbong.api.helper.deserializer.XbbFormTypeDeserializer;
 import com.luban.xbongbong.api.helper.deserializer.XbbOperateTypeDeserializer;
 import com.luban.xbongbong.api.helper.enums.XbbBizType;
+import com.luban.xbongbong.api.helper.enums.XbbFormType;
 import com.luban.xbongbong.api.helper.enums.XbbOperateType;
 import com.luban.xbongbong.api.helper.serializer.XbbBizTypeSerializer;
 import com.luban.xbongbong.api.helper.serializer.XbbFormTypeSerializer;
 import com.luban.xbongbong.api.helper.serializer.XbbOperateTypeSerializer;
-import com.luban.xbongbong.api.helper.deserializer.XbbFormTypeDeserializer;
-import com.luban.xbongbong.api.helper.enums.XbbFormType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,11 +20,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class WebhookPayload {
+
     /**
      * 对应数据的表单模板id*
      */
     @JSONField(ordinal = 0)
     private Long formId;
+
     /**
      * 操作类型（说明见操作类型枚举）*
      */
@@ -34,18 +36,24 @@ public class WebhookPayload {
             serializeUsing = XbbOperateTypeSerializer.class
     )
     private XbbOperateType operate;
+
     /**
      * 公司id*
      */
     @JSONField(ordinal = 2)
     private String corpid;
+
     /**
      * 业务主键id*
      */
     @JSONField(ordinal = 3)
     private Long dataId;
+
     /**
-     * 回调业务*
+     * 回调业务(对于自定义的表单, 这里为空)*
+     * <p>
+     * 销帮帮文档没写这东西(SHA BI)
+     * @Nullable
      */
     @JSONField(
             ordinal = 4,
