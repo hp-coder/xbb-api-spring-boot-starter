@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * When {@code @ConditionalOnProperty(prefix = "xbb", name = {"token", "gateway", "corp-id", "user-id", "webhook-token"})}
+ * When {@code @ConditionalOnProperty(prefix = "xbb", name = {"token", "corp-id", "user-id", "webhook-token"})}
  * are met,
  * the endpoint to receive events from XBB is activated.
  * <p>

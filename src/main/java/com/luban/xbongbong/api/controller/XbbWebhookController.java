@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService;
  */
 @Slf4j
 @RestController
-@ConditionalOnProperty(prefix = "xbb", name = {"token", "corp-id", "webhook-token"})
+@ConditionalOnProperty(prefix = "xbb", name = {"token", "corp-id", "user-id", "webhook-token"})
 @RequiredArgsConstructor
 @RequestMapping("/xbb/webhook")
 public class XbbWebhookController {
