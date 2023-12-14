@@ -1,5 +1,6 @@
 package com.luban.xbongbong.api.helper.enums.customer;
 
+import com.luban.common.base.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,12 +9,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * 对应客户表单的客户来源
- * @author HP 2023/2/10
+ * @author hp
  */
-@AllArgsConstructor
 @Getter
-public enum XbbCustomerSource {
+@AllArgsConstructor
+public enum XbbCustomerSource implements BaseEnum<XbbCustomerSource, String> {
     /***/
     SEO("1", "网络推广"),
     TELESALES("2", "电话销售"),
@@ -22,16 +22,16 @@ public enum XbbCustomerSource {
     LEBIAO_REGISTER("c91b7616-ffab-c8a9-107e-c24e06b3796a", "乐标注册用户"),
     COMPANY_RESOURCES("e64d5caa-611e-c994-d400-7ddfacf91cdb", "公司资源"),
     ;
-
     private final String code;
     private final String name;
 
-    public static Optional<XbbCustomerSource> ofCode(String code) {
-        return Arrays.stream(XbbCustomerSource.values()).filter(i -> Objects.equals(code, i.getCode())).findFirst();
+    public static Optional<XbbCustomerSource> of(String code) {
+        return Optional.ofNullable(BaseEnum.parseByCode(XbbCustomerSource.class, code));
     }
 
     public static Optional<XbbCustomerSource> ofName(String name) {
-        return Arrays.stream(XbbCustomerSource.values()).filter(i -> Objects.equals(name, i.getName())).findFirst();
+        return Arrays.stream(values())
+                .filter(i -> Objects.equals(name, i.getName()))
+                .findFirst();
     }
-
 }
