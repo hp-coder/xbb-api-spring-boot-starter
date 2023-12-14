@@ -1,9 +1,13 @@
 package com.luban.xbongbong.api.helper;
 
+import com.google.common.base.Preconditions;
 import com.luban.common.base.annotations.FieldDesc;
+import com.luban.xbongbong.api.helper.config.XbbConfiguration;
 import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.Objects;
 
 import static com.luban.xbongbong.api.helper.enums.api.ApiType.READ;
 import static com.luban.xbongbong.api.helper.enums.api.ApiType.WRITE;
@@ -16,13 +20,23 @@ public interface XbbUrl {
 
     ApiType getType();
 
+    default String getRequestUrl() {
+        final String apiGateway = XbbConfiguration.API_GATEWAY;
+        Preconditions.checkArgument(Objects.nonNull(apiGateway));
+        return apiGateway + getUri();
+    }
+
+    default String getLogInfo() {
+        return "type=" + getType().name()+"||url=" + getRequestUrl();
+    }
+
     @Getter
     @AllArgsConstructor
     enum PaymentSheet implements XbbUrl {
         @FieldDesc("回款单列表")
         LIST("/paymentSheet/list", READ),
         @FieldDesc("回款单详情")
-        GET("/paymentSheet/list", READ);
+        GET("/paymentSheet/detail", READ);
 
         private final String uri;
         private final ApiType type;

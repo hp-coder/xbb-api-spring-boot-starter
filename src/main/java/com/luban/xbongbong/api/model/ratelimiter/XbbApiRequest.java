@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.luban.common.base.model.Request;
 import com.luban.xbongbong.api.helper.XbbUrl;
-import com.luban.xbongbong.api.helper.config.XbbConfiguration;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +30,7 @@ public class XbbApiRequest implements Request {
     }
 
     public String getRequestUrl() {
-        final String apiGateway = XbbConfiguration.API_GATEWAY;
-        Preconditions.checkArgument(Objects.nonNull(apiGateway));
-        return apiGateway + url.getUri();
+        return url.getRequestUrl();
     }
 
     public boolean retryable() {
@@ -43,5 +40,12 @@ public class XbbApiRequest implements Request {
         }
         log.error(this.toString());
         throw new XbbException(-1, "销帮帮API请求以达到重试上限: " + this.url);
+    }
+
+    public String getLogInfo() {
+        if (Objects.isNull(data)) {
+            return "request=null" + "||" + url.getLogInfo();
+        }
+        return "request=" + data.toJSONString() + "||" + url.getLogInfo();
     }
 }

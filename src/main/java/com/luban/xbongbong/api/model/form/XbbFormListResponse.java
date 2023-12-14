@@ -14,10 +14,10 @@ import java.util.List;
  */
 @Data
 public class XbbFormListResponse implements Response {
-    private List<FormList> formList;
+    private List<XbbFormListModel> formList;
 
     @Data
-    public static class FormList {
+    public static class XbbFormListModel {
         private Long appId;
         @JSONField(
                 serializeUsing = XbbFormBizTypeSerializer.class,

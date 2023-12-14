@@ -1,9 +1,7 @@
 package com.luban.xbongbong.api.service.customer;
 
 import cn.hutool.core.collection.CollUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.luban.xbongbong.api.helper.enums.XbbFormConditionSymbol;
 import com.luban.xbongbong.api.helper.enums.XbbSubBusinessType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
@@ -17,10 +15,12 @@ import com.luban.xbongbong.api.model.customer.XbbCustomerAlterResponse;
 import com.luban.xbongbong.api.model.customer.XbbCustomerCommonResponse;
 import com.luban.xbongbong.api.model.customer.XbbCustomerDeleteResponse;
 import lombok.NonNull;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static com.luban.xbongbong.api.helper.XbbUrl.Customer;
 
@@ -38,7 +38,7 @@ public class XbbCustomerApi {
     }
 
 
-    public static List<XbbListItemModel> recursivelyGetCustomersByConditions(List<XbbFormCondition> conditions) throws Exception {
+    public static List<XbbListItemModel> recursivelyGetCustomersByConditions(List<XbbFormCondition> conditions) {
         List<XbbListItemModel> total = new ArrayList<>();
         List<XbbListItemModel> list = null;
         int page = 1;
@@ -58,7 +58,7 @@ public class XbbCustomerApi {
      * @param dataId 客户数据id
      * @return 客户数据，具体字段参考 resources/detail.json
      */
-    public static XbbDetailModel get(@NonNull Long dataId) throws Exception {
+    public static XbbDetailModel get(@NonNull Long dataId) {
         return XbbApiCaller.get(dataId, Customer.GET);
     }
 
@@ -67,11 +67,12 @@ public class XbbCustomerApi {
      *
      * @return 客户数据，具体字段参考 resources/detail.json
      */
-    public static XbbDetailModel getByUserId(@NonNull Long formId, @NonNull String userIdField, @NonNull Long userId) throws Exception {
+    public static XbbDetailModel getByUserId(@NonNull Long formId, @NonNull String userIdField, @NonNull Long userId) {
         final XbbFormCondition xbbFormCondition = new XbbFormCondition();
         xbbFormCondition.setAttr(userIdField);
         xbbFormCondition.setSymbol(XbbFormConditionSymbol.eq);
         xbbFormCondition.setValue(Collections.singletonList(userId));
+
         final XbbPageResponse response = list(formId, Collections.singletonList(xbbFormCondition), null, null, 1, 1);
         if (response == null || CollectionUtils.isEmpty(response.getList())) {
             return null;
@@ -89,32 +90,18 @@ public class XbbCustomerApi {
      * @param page       页码
      * @param pageSize   每页记录数
      * @return 用户数据列表响应
-     * @throws Exception 请求异常
      */
-    public static XbbPageResponse list(@NonNull Long formId, List<XbbFormCondition> conditions, Boolean isPublic, Boolean del, int page, Integer pageSize) throws Exception {
-        //创建参数data
-        JSONObject data = new JSONObject();
+    public static XbbPageResponse list(@NonNull Long formId, List<XbbFormCondition> conditions, Boolean isPublic, Boolean del, int page, Integer pageSize) {
+        final JSONObject data = new JSONObject();
         data.put("formId", formId);
         data.put("page", page);
         Optional.ofNullable(conditions).ifPresent(i -> data.put("conditions", conditions));
         Optional.ofNullable(pageSize).ifPresent(i -> data.put("pageSize", i));
         Optional.ofNullable(isPublic).ifPresent(i -> data.put("isPublic", isPublic ? 1 : 0));
         Optional.ofNullable(del).ifPresent(i -> data.put("del", del ? 1 : 0));
-        //调用xbbApi方法，发起接口请求
-        String response = XbbApiCaller.call(Customer.LIST, data);
-        //对返回值进行解析
-        XbbResponse<XbbPageResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            throw new Exception("json解析出错", e);
-        }
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            return xbbResponse.getResult();
-        } else {
-            throw new Exception(xbbResponse.getMsg());
-        }
+
+        final XbbResponse<XbbPageResponse> response = XbbApiCaller.call(Customer.LIST, data);
+        return response.getResult(XbbPageResponse.class);
     }
 
     /**
@@ -123,49 +110,24 @@ public class XbbCustomerApi {
      * @param formId   表单id
      * @param dataList 表单数据
      * @return 接口回参
-     * @throws XbbException 异常
      */
-    public static Long add(@NonNull Long formId, @NonNull JSONObject dataList) throws XbbException {
-        //创建参数data
+    public static Long add(@NonNull Long formId, @NonNull JSONObject dataList) {
         JSONObject data = new JSONObject();
         data.put("formId", formId);
         data.put("dataList", dataList);
-        //调用xbbApi方法，发起API请求
-        String response = XbbApiCaller.call(Customer.ADD, data);
-        //对返回值进行解析
+
+        final XbbResponse<XbbCustomerAlterResponse> response = XbbApiCaller.call(Customer.ADD, data);
         return getCustomerAlterDataId(response);
     }
 
     public static Long edit(@NonNull Long formId, @NonNull Long dataId, @NonNull JSONObject dataList) throws XbbException {
-        //创建参数data
-        JSONObject data = new JSONObject();
+        final JSONObject data = new JSONObject();
         data.put("formId", formId);
         data.put("dataId", dataId);
         data.put("dataList", dataList);
-        //调用xbbApi方法，发起API请求
-        String response = XbbApiCaller.call(Customer.EDIT, data);
-        //对返回值进行解析
-        return getCustomerAlterDataId(response);
-    }
 
-    private static Long getCustomerAlterDataId(String response) {
-        XbbResponse<XbbCustomerAlterResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            throw new XbbException(-1, "json解析出错");
-        }
-        Long dataId = null;
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            final XbbCustomerAlterResponse alterResponse = xbbResponse.getResult();
-            if (alterResponse != null) {
-                dataId = alterResponse.getDataId();
-            }
-            return dataId;
-        } else {
-            throw new XbbException(xbbResponse.getCode(), xbbResponse.getMsg());
-        }
+        final XbbResponse<XbbCustomerAlterResponse> response = XbbApiCaller.call(Customer.EDIT, data);
+        return getCustomerAlterDataId(response);
     }
 
     /**
@@ -177,13 +139,13 @@ public class XbbCustomerApi {
      * @return 是否成功
      * @throws XbbException 异常
      */
-    public static boolean distribution(@NonNull String managerId, @NonNull List<Long> dataIds, @NonNull XbbSubBusinessType subBusinessType) throws XbbException {
-        JSONObject data = new JSONObject();
+    public static boolean distribution(@NonNull String managerId, @NonNull List<Long> dataIds, @NonNull XbbSubBusinessType subBusinessType) {
+        final JSONObject data = new JSONObject();
         data.put("subBusinessType", subBusinessType.getCode());
         data.put("dataIdList", dataIds);
         data.put("businessUserId", managerId);
-        String response = XbbApiCaller.call(Customer.DISTRIBUTION, data);
-        //对返回值进行解析
+
+        final XbbResponse<XbbCustomerCommonResponse> response = XbbApiCaller.call(Customer.DISTRIBUTION, data);
         return booleanResponse(response);
     }
 
@@ -195,10 +157,10 @@ public class XbbCustomerApi {
      * @return 是否成功
      */
     public static boolean backToPublicSea(@NonNull List<Long> dataIds) {
-        JSONObject data = new JSONObject();
+        final JSONObject data = new JSONObject();
         data.put("dataIdList", dataIds);
-        String response = XbbApiCaller.call(Customer.BACK_TO_PUBLIC_SEA, data);
-        //对返回值进行解析
+
+        final XbbResponse<XbbCustomerCommonResponse> response = XbbApiCaller.call(Customer.BACK_TO_PUBLIC_SEA, data);
         return booleanResponse(response);
     }
 
@@ -210,11 +172,11 @@ public class XbbCustomerApi {
      * @return 是否成功
      */
     public static boolean removeOwner(@NonNull Long dataId, @NonNull List<String> dingTalkUserIds) {
-        JSONObject data = new JSONObject();
+        final JSONObject data = new JSONObject();
         data.put("businessUserIdList", dingTalkUserIds);
         data.put("dataId", dataId);
-        String response = XbbApiCaller.call(Customer.OWNER_REMOVE, data);
-        //对返回值进行解析
+
+        final XbbResponse<XbbCustomerCommonResponse> response = XbbApiCaller.call(Customer.OWNER_REMOVE, data);
         return booleanResponse(response);
     }
 
@@ -228,11 +190,11 @@ public class XbbCustomerApi {
      * @return 是否成功
      */
     public static boolean handover(@NonNull String dingTalkUserId, @NonNull List<Long> dataIds) {
-        JSONObject data = new JSONObject();
+        final JSONObject data = new JSONObject();
         data.put("businessUserId", dingTalkUserId);
         data.put("dataIdList", dataIds);
-        String response = XbbApiCaller.call(Customer.HANDOVER, data);
-        //对返回值进行解析
+
+        final XbbResponse<XbbCustomerCommonResponse> response = XbbApiCaller.call(Customer.HANDOVER, data);
         return booleanResponse(response);
     }
 
@@ -243,51 +205,28 @@ public class XbbCustomerApi {
      * @return 是否成功
      */
     public static boolean delete(@NonNull Long dataId) {
-        JSONObject data = new JSONObject();
+        final JSONObject data = new JSONObject();
         data.put("dataId", dataId);
-        String response = XbbApiCaller.call(Customer.DELETE, data);
-        //对返回值进行解析
-        XbbResponse<XbbCustomerDeleteResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            throw new XbbException(-1, "json解析出错");
-        }
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            final XbbCustomerDeleteResponse result = xbbResponse.getResult();
-            if (result != null) {
-                Assert.isTrue(Objects.equals("", result.getErrorDataMemo()), () -> {
-                    throw new XbbException(-1, JSONObject.toJSONString(result));
-                });
-                return true;
-            }
+
+        final XbbResponse<XbbCustomerDeleteResponse> response = XbbApiCaller.call(Customer.DELETE, data);
+        if (response.isNullResult()) {
             return false;
-        } else {
-            throw new XbbException(xbbResponse.getCode(), xbbResponse.getMsg());
         }
+        return response.getResult(XbbCustomerDeleteResponse.class).succeed();
     }
 
+    private static Long getCustomerAlterDataId(XbbResponse<XbbCustomerAlterResponse> response) {
+        if (response.isNullResult()) {
+            return null;
+        }
+        return response.getResult(XbbCustomerAlterResponse.class).getDataId();
+    }
 
-    private static boolean booleanResponse(String response) {
-        XbbResponse<XbbCustomerCommonResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            throw new XbbException(-1, "json解析出错");
-        }
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            final XbbCustomerCommonResponse result = xbbResponse.getResult();
-            if (result != null) {
-                Assert.isTrue(Objects.equals("success", result.getResultType()), () -> {
-                    throw new XbbException(-1, JSON.toJSONString(result));
-                });
-                return true;
-            }
+    private static boolean booleanResponse(XbbResponse<XbbCustomerCommonResponse> response) {
+        final XbbCustomerCommonResponse result = response.getResult(XbbCustomerCommonResponse.class);
+        if (response.isNullResult()) {
             return false;
-        } else {
-            throw new XbbException(xbbResponse.getCode(), xbbResponse.getMsg());
         }
+        return result.succeed();
     }
 }

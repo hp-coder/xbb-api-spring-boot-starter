@@ -1,10 +1,9 @@
 package com.luban.xbongbong.api.service.customform;
 
 import cn.hutool.core.collection.CollUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.luban.xbongbong.api.helper.enums.XbbFormType;
+import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.helper.utils.XbbApiCaller;
 import com.luban.xbongbong.api.model.XbbFormCondition;
 import com.luban.xbongbong.api.model.XbbResponse;
@@ -15,13 +14,12 @@ import com.luban.xbongbong.api.model.customform.XbbCustomFormListResponse;
 import com.luban.xbongbong.api.model.form.XbbFormListResponse;
 import com.luban.xbongbong.api.service.form.XbbFormApi;
 import lombok.NonNull;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.luban.xbongbong.api.helper.XbbUrl.Customer;
+import static com.luban.xbongbong.api.helper.XbbUrl.CustomForm;
 
 /**
  * @author HP 2023/1/5
@@ -44,11 +42,11 @@ public class XbbCustomFormApi {
         try {
             formId = XbbCustomFormApi.getCustomFormId(formName);
             if (formId == null) {
-                throw new RuntimeException("未查询到同名自定义表单： " + formName);
+                throw new XbbException("未查询到同名自定义表单： " + formName);
             }
             return formId;
         } catch (Exception e) {
-            throw new RuntimeException("获取自定义表单" + formName + "失败", e);
+            throw new XbbException("获取自定义表单" + formName + "失败", e);
         }
     }
 
@@ -57,15 +55,17 @@ public class XbbCustomFormApi {
      *
      * @param formName 表单名称
      * @return 表单formId
-     * @throws Exception 请求异常
      */
-    public static Long getCustomFormId(@NonNull String formName) throws Exception {
-        final List<XbbFormListResponse.FormList> list = XbbFormApi.list(formName, XbbFormType.CUSTOM, null);
-        if (CollectionUtils.isEmpty(list)) {
+    public static Long getCustomFormId(@NonNull String formName) {
+        final List<XbbFormListResponse.XbbFormListModel> list = XbbFormApi.list(formName, XbbFormType.CUSTOM, null);
+        if (CollUtil.isEmpty(list)) {
             return null;
         }
-        final Optional<XbbFormListResponse.FormList> optional = list.stream().filter(form -> Objects.equals(formName, form.getName())).findFirst();
-        return optional.map(XbbFormListResponse.FormList::getFormId).orElse(null);
+        final Optional<XbbFormListResponse.XbbFormListModel> optional = list.stream()
+                .filter(form -> Objects.equals(formName, form.getName()))
+                .findFirst();
+        return optional.map(XbbFormListResponse.XbbFormListModel::getFormId)
+                .orElse(null);
     }
 
     /**
@@ -74,14 +74,14 @@ public class XbbCustomFormApi {
      * @param formId   自定义表单id
      * @param dataList 数据体，需要根据表单字段构建
      * @return 响应
-     * @throws Exception 请求异常
      */
-    public static XbbCustomFormAlterResponse add(@NonNull Long formId, @NonNull JSONObject dataList) throws Exception {
+    public static XbbCustomFormAlterResponse add(@NonNull Long formId, @NonNull JSONObject dataList) {
         JSONObject data = new JSONObject();
         data.put("formId", formId);
         data.put("dataList", dataList);
-        String response = XbbApiCaller.call(Customer.ADD, data);
-        return getXbbCustomFormAlterResponse(response);
+
+        final XbbResponse<XbbCustomFormAlterResponse> xbbResponse = XbbApiCaller.call(CustomForm.ADD, data);
+        return xbbResponse.getResult(XbbCustomFormAlterResponse.class);
     }
 
     /**
@@ -91,32 +91,16 @@ public class XbbCustomFormApi {
      * @param dataId   数据id
      * @param dataList 数据体
      * @return 响应
-     * @throws Exception 请求异常
      */
-    public static XbbCustomFormAlterResponse edit(@NonNull Long formId, @NonNull Long dataId, @NonNull JSONObject dataList) throws Exception {
+    public static XbbCustomFormAlterResponse edit(@NonNull Long formId, @NonNull Long dataId, @NonNull JSONObject dataList) {
         JSONObject data = new JSONObject();
         data.put("formId", formId);
         data.put("dataId", dataId);
         data.put("dataList", dataList);
-        String response = XbbApiCaller.call(Customer.EDIT, data);
-        return getXbbCustomFormAlterResponse(response);
-    }
 
-    private static XbbCustomFormAlterResponse getXbbCustomFormAlterResponse(String response) throws Exception {
-        XbbResponse<XbbCustomFormAlterResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            throw new Exception("json解析出错", e);
-        }
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            return xbbResponse.getResult();
-        } else {
-            throw new Exception(xbbResponse.getMsg());
-        }
+        final XbbResponse<XbbCustomFormAlterResponse> xbbResponse = XbbApiCaller.call(CustomForm.EDIT, data);
+        return xbbResponse.getResult(XbbCustomFormAlterResponse.class);
     }
-
 
     /**
      * 获取自定义表单数据列表*
@@ -126,9 +110,13 @@ public class XbbCustomFormApi {
      * @param page       页码
      * @param pageSize   每页记录数
      * @return XbbCustomFormListResponse 结果集
-     * @throws Exception 请求异常
      */
-    public static XbbCustomFormListResponse list(@NonNull Long formId, List<XbbFormCondition> conditions, Integer page, Integer pageSize) throws Exception {
+    public static XbbCustomFormListResponse list(
+            @NonNull Long formId,
+            List<XbbFormCondition> conditions,
+            Integer page,
+            Integer pageSize
+    ) {
         JSONObject data = new JSONObject();
         data.put("formId", formId);
         if (CollUtil.isNotEmpty(conditions)) {
@@ -136,19 +124,9 @@ public class XbbCustomFormApi {
         }
         Optional.ofNullable(page).ifPresent(p -> data.put("page", p));
         Optional.ofNullable(pageSize).ifPresent(p -> data.put("pageSize", p));
-        String response = XbbApiCaller.call(Customer.LIST, data);
-        XbbResponse<XbbCustomFormListResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            throw new Exception("json解析出错", e);
-        }
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            return xbbResponse.getResult();
-        } else {
-            throw new Exception(xbbResponse.getMsg());
-        }
+
+        final XbbResponse<XbbCustomFormListResponse> response = XbbApiCaller.call(CustomForm.LIST, data);
+        return response.getResult(XbbCustomFormListResponse.class);
     }
 
     /**
@@ -156,10 +134,9 @@ public class XbbCustomFormApi {
      *
      * @param dataId 数据id
      * @return XbbCustomFormDetailResponse 详情
-     * @throws Exception 请求异常
      */
-    public static XbbDetailModel get(@NonNull Long dataId) throws Exception {
-        return XbbApiCaller.get(dataId, Customer.GET);
+    public static XbbDetailModel get(@NonNull Long dataId) {
+        return XbbApiCaller.get(dataId, CustomForm.GET);
     }
 
     /**
@@ -167,23 +144,12 @@ public class XbbCustomFormApi {
      *
      * @param dataId 数据主键id
      * @return 响应
-     * @throws Exception 请求异常
      */
-    public static XbbCustomFormDeleteResponse delete(@NonNull Long dataId) throws Exception {
+    public static XbbCustomFormDeleteResponse delete(@NonNull Long dataId) {
         JSONObject data = new JSONObject();
         data.put("dataId", dataId);
-        String response = XbbApiCaller.call(Customer.DELETE, data);
-        XbbResponse<XbbCustomFormDeleteResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            throw new Exception("json解析出错", e);
-        }
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            return xbbResponse.getResult();
-        } else {
-            throw new Exception(xbbResponse.getMsg());
-        }
+
+        final XbbResponse<XbbCustomFormDeleteResponse> response = XbbApiCaller.call(CustomForm.DELETE, data);
+        return response.getResult(XbbCustomFormDeleteResponse.class);
     }
 }

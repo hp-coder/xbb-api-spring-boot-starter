@@ -3,7 +3,7 @@ package com.luban.xbongbong.api.model.label;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.luban.xbongbong.api.helper.enums.XbbFormBizType;
 import com.luban.xbongbong.api.helper.serializer.XbbFormBizTypeSerializer;
-import com.luban.xbongbong.api.model.XbbBaseModel;
+import com.luban.xbongbong.api.model.AbstractXbbBaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class XbbAddLabelModel extends XbbBaseModel {
+public class XbbAddLabelModel extends AbstractXbbBaseModel {
     /**
      * 数据列表
      */

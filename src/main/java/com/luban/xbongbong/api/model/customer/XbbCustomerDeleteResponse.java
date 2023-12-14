@@ -1,5 +1,6 @@
 package com.luban.xbongbong.api.model.customer;
 
+import cn.hutool.core.util.StrUtil;
 import com.luban.common.base.model.Response;
 import lombok.Data;
 
@@ -9,4 +10,8 @@ import lombok.Data;
 @Data
 public class XbbCustomerDeleteResponse implements Response {
     private String errorDataMemo;
+
+    public boolean succeed() {
+        return StrUtil.isEmpty(getErrorDataMemo());
+    }
 }

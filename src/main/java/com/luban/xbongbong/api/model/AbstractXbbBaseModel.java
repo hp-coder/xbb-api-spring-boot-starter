@@ -10,7 +10,7 @@ import lombok.Data;
  * @author HP 2023/2/2
  */
 @Data
-public abstract class XbbBaseModel implements Request {
+public abstract class AbstractXbbBaseModel implements Request {
     public JSONObject json() {
         return JSON.parseObject(JSON.toJSONString(this, SerializerFeature.PrettyFormat));
     }

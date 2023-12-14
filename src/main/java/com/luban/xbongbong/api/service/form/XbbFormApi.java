@@ -1,19 +1,17 @@
 package com.luban.xbongbong.api.service.form;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.luban.xbongbong.api.helper.XbbUrl.Form;
 import com.luban.xbongbong.api.helper.enums.XbbFormBizType;
 import com.luban.xbongbong.api.helper.enums.XbbFormType;
 import com.luban.xbongbong.api.helper.utils.XbbApiCaller;
 import com.luban.xbongbong.api.model.XbbResponse;
+import com.luban.xbongbong.api.model.form.XbbFormFieldResponse;
 import com.luban.xbongbong.api.model.form.XbbFormListResponse;
 import lombok.NonNull;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -33,34 +31,18 @@ public class XbbFormApi {
      * @param name         表单模板名称
      * @param businessType 业务类型
      * @return 接口回参-表单模板列表
-     * @throws Exception 异常
      */
-    public static List<XbbFormListResponse.FormList> list(String name, @NonNull XbbFormType formType, XbbFormBizType businessType) throws Exception {
-        //创建请求参数data
-        JSONObject data = new JSONObject();
+    public static List<XbbFormListResponse.XbbFormListModel> list(String name, @NonNull XbbFormType formType, XbbFormBizType businessType) {
+        final JSONObject data = new JSONObject();
         data.put("saasMark", formType.getCode());
         Optional.ofNullable(name).ifPresent(i -> data.put("name", i));
         Optional.ofNullable(businessType).ifPresent(i -> data.put("businessType", i.getCode()));
-        //调用xbbApi方法，发起API请求
-        String response = XbbApiCaller.call(Form.LIST, data);
-        //对返回值进行解析
-        XbbResponse<XbbFormListResponse> xbbResponse;
-        try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            throw new Exception("json解析出错", e);
+
+        final XbbResponse<XbbFormListResponse> xbbResponse = XbbApiCaller.call(Form.LIST, data);
+        if (xbbResponse.isNullResult()) {
+            return Collections.emptyList();
         }
-        List<XbbFormListResponse.FormList> retArray = null;
-        if (Objects.equals(xbbResponse.getCode(), 1)) {
-            final XbbFormListResponse result = xbbResponse.getResult();
-            if (result != null) {
-                retArray = result.getFormList();
-            }
-            return retArray;
-        } else {
-            throw new Exception(xbbResponse.getMsg());
-        }
+        return xbbResponse.getResult(XbbFormListResponse.class).getFormList();
     }
 
     /**
@@ -68,30 +50,15 @@ public class XbbFormApi {
      *
      * @param formId 表单id
      * @return 接口回参-表单模板字段解释
-     * @throws Exception 异常
      */
-    public static JSONArray get(@NonNull Long formId) throws Exception {
-        //创建请求参数data
+    public static List<XbbFormFieldResponse.XbbFormFieldModel> get(@NonNull Long formId) {
         JSONObject data = new JSONObject();
         data.put("formId", formId);
-        //调用xbbApi方法， 发起API请求
-        String response = XbbApiCaller.call(Form.GET, data);
-        //对返回值进行解析
-        JSONObject responseJson;
-        try {
-            responseJson = JSON.parseObject(response);
-        } catch (Exception e) {
-            throw new Exception("json解析出错", e);
+
+        final XbbResponse<XbbFormFieldResponse> responseJson = XbbApiCaller.call(Form.GET, data);
+        if (responseJson.isNullResult()) {
+            return Collections.emptyList();
         }
-        JSONArray retArray = null;
-        if (responseJson.containsKey("code") && responseJson.getInteger("code").equals(1)) {
-            JSONObject result = responseJson.getJSONObject("result");
-            if (result != null) {
-                retArray = result.getJSONArray("explainList");
-            }
-            return retArray;
-        } else {
-            throw new Exception(responseJson.getString("msg"));
-        }
+        return responseJson.getResult(XbbFormFieldResponse.class).getExplainList();
     }
 }
