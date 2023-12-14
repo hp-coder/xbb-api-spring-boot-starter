@@ -18,7 +18,6 @@ import java.util.List;
 @Data
 public class XbbFormCondition {
     private String attr;
-
     private List<?> value;
     private String subAttr;
     @JSONField(

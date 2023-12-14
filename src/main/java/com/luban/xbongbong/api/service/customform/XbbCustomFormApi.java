@@ -1,12 +1,11 @@
-package com.luban.xbongbong.api.sdk.customform;
+package com.luban.xbongbong.api.service.customform;
 
 import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.helper.enums.XbbFormType;
-import com.luban.xbongbong.api.helper.enums.api.ApiType;
+import com.luban.xbongbong.api.helper.utils.XbbApiCaller;
 import com.luban.xbongbong.api.model.XbbFormCondition;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.common.detail.XbbDetailModel;
@@ -14,13 +13,15 @@ import com.luban.xbongbong.api.model.customform.XbbCustomFormAlterResponse;
 import com.luban.xbongbong.api.model.customform.XbbCustomFormDeleteResponse;
 import com.luban.xbongbong.api.model.customform.XbbCustomFormListResponse;
 import com.luban.xbongbong.api.model.form.XbbFormListResponse;
-import com.luban.xbongbong.api.sdk.form.XbbFormApi;
+import com.luban.xbongbong.api.service.form.XbbFormApi;
 import lombok.NonNull;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.luban.xbongbong.api.helper.XbbUrl.Customer;
 
 /**
  * @author HP 2023/1/5
@@ -79,7 +80,7 @@ public class XbbCustomFormApi {
         JSONObject data = new JSONObject();
         data.put("formId", formId);
         data.put("dataList", dataList);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOM_FORM.ADD, data, ApiType.WRITE);
+        String response = XbbApiCaller.call(Customer.ADD, data);
         return getXbbCustomFormAlterResponse(response);
     }
 
@@ -97,7 +98,7 @@ public class XbbCustomFormApi {
         data.put("formId", formId);
         data.put("dataId", dataId);
         data.put("dataList", dataList);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOM_FORM.EDIT, data, ApiType.WRITE);
+        String response = XbbApiCaller.call(Customer.EDIT, data);
         return getXbbCustomFormAlterResponse(response);
     }
 
@@ -135,7 +136,7 @@ public class XbbCustomFormApi {
         }
         Optional.ofNullable(page).ifPresent(p -> data.put("page", p));
         Optional.ofNullable(pageSize).ifPresent(p -> data.put("pageSize", p));
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOM_FORM.LIST, data, ApiType.READ);
+        String response = XbbApiCaller.call(Customer.LIST, data);
         XbbResponse<XbbCustomFormListResponse> xbbResponse;
         try {
             xbbResponse = JSON.parseObject(response, new TypeReference<>() {
@@ -158,7 +159,7 @@ public class XbbCustomFormApi {
      * @throws Exception 请求异常
      */
     public static XbbDetailModel get(@NonNull Long dataId) throws Exception {
-        return ConfigConstant.get(dataId, ConfigConstant.CUSTOM_FORM.GET);
+        return XbbApiCaller.get(dataId, Customer.GET);
     }
 
     /**
@@ -171,7 +172,7 @@ public class XbbCustomFormApi {
     public static XbbCustomFormDeleteResponse delete(@NonNull Long dataId) throws Exception {
         JSONObject data = new JSONObject();
         data.put("dataId", dataId);
-        String response = ConfigConstant.xbbApi(ConfigConstant.CUSTOM_FORM.DELETE, data, ApiType.WRITE);
+        String response = XbbApiCaller.call(Customer.DELETE, data);
         XbbResponse<XbbCustomFormDeleteResponse> xbbResponse;
         try {
             xbbResponse = JSON.parseObject(response, new TypeReference<>() {

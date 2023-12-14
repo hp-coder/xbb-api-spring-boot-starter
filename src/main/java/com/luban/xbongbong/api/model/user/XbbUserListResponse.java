@@ -1,7 +1,7 @@
 package com.luban.xbongbong.api.model.user;
 
 import com.luban.xbongbong.api.model.DingTalkUser;
-import com.luban.xbongbong.api.model.Response;
+import com.luban.common.base.model.Response;
 import lombok.Data;
 
 import java.util.List;

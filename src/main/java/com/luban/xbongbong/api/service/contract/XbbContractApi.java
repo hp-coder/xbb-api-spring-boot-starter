@@ -1,6 +1,7 @@
-package com.luban.xbongbong.api.sdk.contract;
+package com.luban.xbongbong.api.service.contract;
 
-import com.luban.xbongbong.api.helper.config.ConfigConstant;
+import com.luban.xbongbong.api.helper.XbbUrl;
+import com.luban.xbongbong.api.helper.utils.XbbApiCaller;
 import com.luban.xbongbong.api.model.common.detail.XbbDetailModel;
 import lombok.NonNull;
 
@@ -14,6 +15,6 @@ public class XbbContractApi {
     }
 
     public static XbbDetailModel get(@NonNull Long dataId) throws Exception {
-        return ConfigConstant.get(dataId, ConfigConstant.CONTRACT.GET);
+        return XbbApiCaller.get(dataId, XbbUrl.Contract.GET);
     }
 }

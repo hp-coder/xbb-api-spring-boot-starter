@@ -1,12 +1,11 @@
-package com.luban.xbongbong.api.sdk.label;
+package com.luban.xbongbong.api.service.label;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.luban.xbongbong.api.helper.config.ConfigConstant;
 import com.luban.xbongbong.api.helper.enums.XbbBizType;
-import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
+import com.luban.xbongbong.api.helper.utils.XbbApiCaller;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.label.XbbAddLabelModel;
 import com.luban.xbongbong.api.model.label.XbbFormLabelResponse;
@@ -16,6 +15,8 @@ import lombok.NonNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.luban.xbongbong.api.helper.XbbUrl.Label;
 
 /**
  * @author HP 2023/2/2
@@ -44,11 +45,11 @@ public class XbbLabelApi {
         Optional.ofNullable(name).ifPresent(i -> data.put("name", i));
         Optional.ofNullable(isRelabel).ifPresent(i -> data.put("isRelabel", i));
         //调用xbbApi方法，发起API请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.FORM_LABEL_LIST, data, ApiType.READ);
+        String response = XbbApiCaller.call(Label.LIST, data);
         //对返回值进行解析
         XbbResponse<XbbFormLabelResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbFormLabelResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);
@@ -73,7 +74,7 @@ public class XbbLabelApi {
      * @throws Exception 异常
      */
     public static boolean add(@NonNull XbbAddLabelModel model) throws Exception {
-        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.ADD, model.json(), ApiType.WRITE);
+        String response = XbbApiCaller.call(Label.BATCH_ADD, model.json());
         //对返回值进行解析
         return getBaseResponse(response);
     }
@@ -86,7 +87,7 @@ public class XbbLabelApi {
      * @throws Exception 异常
      */
     public static boolean remove(@NonNull XbbRemoveLabelModel model) throws Exception {
-        String response = ConfigConstant.xbbApi(ConfigConstant.LABEL.REMOVE, model.json(), ApiType.WRITE);
+        String response = XbbApiCaller.call(Label.REMOVE, model.json());
         //对返回值进行解析
         return getBaseResponse(response);
     }
@@ -94,7 +95,7 @@ public class XbbLabelApi {
     private static boolean getBaseResponse(String response) throws Exception {
         XbbResponse<?> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<?>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);

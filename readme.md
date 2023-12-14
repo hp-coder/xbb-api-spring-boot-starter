@@ -25,7 +25,7 @@ mvn clean install
 ### Springboot配置
 详情参考配置类说明: 
 - 系统配置
-`com.luban.xbongbong.api.helper.config.ConfigConstant`
+`com.luban.xbongbong.api.helper.config.XbbConfiguration`
 - 业务配置
 `com.luban.xbongbong.api.biz.config.XbbBizConfig`
 

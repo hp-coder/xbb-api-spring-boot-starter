@@ -4,7 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.luban.xbongbong.api.helper.deserializer.XbbFormBizTypeDeserializer;
 import com.luban.xbongbong.api.helper.enums.XbbFormBizType;
 import com.luban.xbongbong.api.helper.serializer.XbbFormBizTypeSerializer;
-import com.luban.xbongbong.api.model.Response;
+import com.luban.common.base.model.Response;
 import lombok.Data;
 
 import java.util.List;

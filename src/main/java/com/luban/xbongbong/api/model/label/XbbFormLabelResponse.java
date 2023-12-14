@@ -3,7 +3,7 @@ package com.luban.xbongbong.api.model.label;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.luban.xbongbong.api.helper.deserializer.XbbBizTypeDeserializer;
 import com.luban.xbongbong.api.helper.enums.XbbBizType;
-import com.luban.xbongbong.api.model.Response;
+import com.luban.common.base.model.Response;
 import lombok.Data;
 
 import java.util.List;

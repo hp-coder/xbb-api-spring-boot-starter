@@ -1,10 +1,9 @@
-package com.luban.xbongbong.api.sdk.user;
+package com.luban.xbongbong.api.service.user;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.luban.xbongbong.api.helper.config.ConfigConstant;
-import com.luban.xbongbong.api.helper.enums.api.ApiType;
+import com.luban.xbongbong.api.helper.utils.XbbApiCaller;
 import com.luban.xbongbong.api.model.DingTalkUser;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.user.XbbUserListResponse;
@@ -15,12 +14,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.luban.xbongbong.api.helper.XbbUrl.User;
+
 /**
  * @author HP 2022/12/28
  */
 public class XbbUserApi {
 
-    private XbbUserApi(){
+    private XbbUserApi() {
         throw new AssertionError();
     }
 
@@ -32,23 +33,21 @@ public class XbbUserApi {
      * @param delIgnore 是否查询已离职员工,0-不查询,1-查询,默认不查询
      * @param page      页码，默认为1
      * @param pageSize  每页数量，默认20，最大值100
-     * @return
-     * @throws Exception
      */
     public static List<DingTalkUser> list(String nameLike, List<String> userIdIn, Boolean delIgnore, Integer page, Integer pageSize) throws Exception {
         //创建参数data
         JSONObject data = new JSONObject();
-        Optional.ofNullable(delIgnore).ifPresent(_0 -> data.put("delIgnore", _0 ? 1 : 0));
-        Optional.ofNullable(nameLike).ifPresent(_0 -> data.put("nameLike", _0));
-        Optional.ofNullable(userIdIn).ifPresent(_0 -> data.put("userIdIn", _0));
-        Optional.ofNullable(page).ifPresent(_0 -> data.put("page", _0));
-        Optional.ofNullable(pageSize).ifPresent(_0 -> data.put("pageSize", _0));
+        Optional.ofNullable(delIgnore).ifPresent(i -> data.put("delIgnore", i ? 1 : 0));
+        Optional.ofNullable(nameLike).ifPresent(i -> data.put("nameLike", i));
+        Optional.ofNullable(userIdIn).ifPresent(i -> data.put("userIdIn", i));
+        Optional.ofNullable(page).ifPresent(i -> data.put("page", i));
+        Optional.ofNullable(pageSize).ifPresent(i -> data.put("pageSize", i));
         //调用xbbApi方法，发起接口请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.USER.LIST, data, ApiType.READ);
+        String response = XbbApiCaller.call(User.LIST, data);
         //对返回值进行解析
         XbbResponse<XbbUserListResponse> xbbResponse;
         try {
-            xbbResponse = JSON.parseObject(response, new TypeReference<XbbResponse<XbbUserListResponse>>() {
+            xbbResponse = JSON.parseObject(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             throw new Exception("json解析出错", e);

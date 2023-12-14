@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum XbbPaymentSheetGroup {
+    /***/
     REFUND(110, "红冲退款"),
     BAD_RECEIVE(111, "坏账回款"),
     ;

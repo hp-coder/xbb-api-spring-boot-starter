@@ -1,6 +1,6 @@
 package com.luban.xbongbong.api.model.customer;
 
-import com.luban.xbongbong.api.model.Response;
+import com.luban.common.base.model.Response;
 import lombok.Data;
 
 /**

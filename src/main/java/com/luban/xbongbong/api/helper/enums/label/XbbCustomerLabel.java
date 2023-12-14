@@ -17,7 +17,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum XbbCustomerLabel {
     /***/
-    VIP(120352, "VIP会员"), EXPIRED_VIP(120353, "过期VIP会员"), CUSTOMER(120354, "注册会员"),
+    VIP(120352L, "VIP会员"),
+    EXPIRED_VIP(120353L, "过期VIP会员"),
+    CUSTOMER(120354L, "注册会员"),
     ;
     private final long code;
     private final String name;

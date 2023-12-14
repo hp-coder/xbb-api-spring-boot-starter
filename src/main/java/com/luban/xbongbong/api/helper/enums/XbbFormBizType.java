@@ -1,5 +1,6 @@
 package com.luban.xbongbong.api.helper.enums;
 
+import com.luban.common.base.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,12 +9,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * @author HP 2022/12/29
+ * @author hp
  */
 @Getter
 @AllArgsConstructor
-public enum XbbFormBizType {
-
+public enum XbbFormBizType implements BaseEnum<XbbFormBizType, Integer> {
+    /***/
     客户(100, "客户"),
     合同订单(201, "合同订单"),
     退货退款(202, "退货退款"),
@@ -43,11 +44,16 @@ public enum XbbFormBizType {
     访客计划(601, "访客计划"),
     自定义表单(null, "自定义表单"),
     ;
-
-    private Integer code;
-    private String name;
+    private final Integer code;
+    private final String name;
 
     public static Optional<XbbFormBizType> of(Integer code) {
-        return Arrays.stream(values()).filter(_0 -> Objects.equals(code, _0.getCode())).findFirst();
+        return Optional.ofNullable(BaseEnum.parseByCode(XbbFormBizType.class, code));
+    }
+
+    public static Optional<XbbFormBizType> ofName(String name) {
+        return Arrays.stream(values())
+                .filter(i -> Objects.equals(name, i.getName()))
+                .findFirst();
     }
 }

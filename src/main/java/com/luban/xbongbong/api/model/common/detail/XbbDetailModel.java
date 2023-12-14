@@ -2,7 +2,7 @@ package com.luban.xbongbong.api.model.common.detail;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.luban.xbongbong.api.model.Response;
+import com.luban.common.base.model.Response;
 import lombok.Data;
 
 import java.util.Optional;

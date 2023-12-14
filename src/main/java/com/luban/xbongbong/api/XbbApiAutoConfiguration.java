@@ -1,16 +1,17 @@
 package com.luban.xbongbong.api;
 
 import cn.hutool.extra.spring.EnableSpringUtil;
-import com.luban.xbongbong.api.helper.config.ConfigConstant;
+import com.luban.xbongbong.api.helper.config.XbbConfiguration;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
 import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
@@ -25,15 +26,13 @@ import java.util.concurrent.TimeUnit;
 @EnableScheduling
 @Configuration
 @EnableConfigurationProperties
-@Import({ConfigConstant.class})
+@RequiredArgsConstructor
+@Import({XbbConfiguration.class})
 public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
 
-    @Autowired
-    private RedissonClient redissonClient;
-    @Autowired
-    private ConfigConstant configConstant;
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    private final RedissonClient redissonClient;
+    private final XbbConfiguration configConstant;
+    private final StringRedisTemplate redisTemplate;
 
     public static final String WRITE_PER_SECOND_LIMITER = "xbb-api-write-per-second-limiter";
     public static final String REQUEST_PER_MINUTE_LIMITER = "xbb-api-request-per-minute-limiter";
@@ -65,6 +64,7 @@ public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
         redisTemplate.delete(REQUEST_PER_DAY_LIMITER);
     }
 
+    @Async
     @Scheduled(cron = "20 0 0 * * ?")
     public void resetLimiter() {
         log.info("xbb request daily request limiter reset starts now...");

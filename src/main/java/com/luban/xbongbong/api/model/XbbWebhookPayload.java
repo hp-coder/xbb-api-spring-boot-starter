@@ -19,7 +19,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class WebhookPayload {
+public class XbbWebhookPayload {
 
     /**
      * 对应数据的表单模板id*

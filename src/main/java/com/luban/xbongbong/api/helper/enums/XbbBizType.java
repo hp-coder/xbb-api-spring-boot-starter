@@ -1,5 +1,6 @@
 package com.luban.xbongbong.api.helper.enums;
 
+import com.luban.common.base.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,11 +9,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * @author HP 2022/12/27
+ * @author hp
  */
 @Getter
 @AllArgsConstructor
-public enum XbbBizType {
+public enum XbbBizType implements BaseEnum<XbbBizType, String> {
+    /***/
     customer("customer", "客户"),
     contract("contract", "合同订单"),
     salesOpportunity("salesOpportunity", "销售机会"),
@@ -27,11 +29,16 @@ public enum XbbBizType {
     purchase("purchase", "采购合同"),
     quotation("quotation ", "报价单 "),
     ;
-
-    private String code;
-    private String name;
+    private final String code;
+    private final String name;
 
     public static Optional<XbbBizType> of(String code) {
-        return Arrays.stream(values()).filter(i-> Objects.equals(i.getCode(),code)).findFirst();
+        return Optional.ofNullable(BaseEnum.parseByCode(XbbBizType.class, code));
+    }
+
+    public static Optional<XbbBizType> ofName(String name) {
+        return Arrays.stream(values())
+                .filter(i -> Objects.equals(name, i.getName()))
+                .findFirst();
     }
 }

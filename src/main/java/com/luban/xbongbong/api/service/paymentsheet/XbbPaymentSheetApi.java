@@ -1,11 +1,10 @@
-package com.luban.xbongbong.api.sdk.paymentsheet;
+package com.luban.xbongbong.api.service.paymentsheet;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.luban.xbongbong.api.helper.config.ConfigConstant;
-import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.helper.enums.paymentsheet.XbbPaymentSheetGroup;
+import com.luban.xbongbong.api.helper.utils.XbbApiCaller;
 import com.luban.xbongbong.api.model.XbbFormCondition;
 import com.luban.xbongbong.api.model.XbbResponse;
 import com.luban.xbongbong.api.model.common.detail.XbbDetailModel;
@@ -17,6 +16,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.luban.xbongbong.api.helper.XbbUrl.PaymentSheet;
+
 /**
  * @author hp
  */
@@ -27,12 +28,12 @@ public class XbbPaymentSheetApi {
 
     public static List<XbbListItemModel> list(List<XbbFormCondition> conditions, XbbPaymentSheetGroup group, Integer page, Integer pageSize) throws Exception {
         JSONObject data = new JSONObject();
-        Optional.ofNullable(conditions).ifPresent(_0 -> data.put("conditions", _0));
-        Optional.ofNullable(group).ifPresent(_0 -> data.put("listGroupId", _0.getCode()));
-        Optional.ofNullable(page).ifPresent(_0 -> data.put("page", _0));
-        Optional.ofNullable(pageSize).ifPresent(_0 -> data.put("pageSize", _0));
+        Optional.ofNullable(conditions).ifPresent(i -> data.put("conditions", i));
+        Optional.ofNullable(group).ifPresent(i -> data.put("listGroupId", i.getCode()));
+        Optional.ofNullable(page).ifPresent(i -> data.put("page", i));
+        Optional.ofNullable(pageSize).ifPresent(i -> data.put("pageSize", i));
         //调用xbbApi方法，发起API请求
-        String response = ConfigConstant.xbbApi(ConfigConstant.PAYMENT_SHEET.LIST, data, ApiType.READ);
+        String response = XbbApiCaller.call(PaymentSheet.LIST, data);
         //对返回值进行解析
         XbbResponse<XbbPageResponse> xbbResponse;
         try {
@@ -54,6 +55,6 @@ public class XbbPaymentSheetApi {
     }
 
     public static XbbDetailModel get(@NonNull Long dataId) throws Exception {
-        return ConfigConstant.get(dataId, ConfigConstant.PAYMENT_SHEET.GET);
+        return XbbApiCaller.get(dataId, PaymentSheet.GET);
     }
 }

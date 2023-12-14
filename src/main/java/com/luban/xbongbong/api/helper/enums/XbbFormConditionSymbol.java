@@ -1,5 +1,6 @@
 package com.luban.xbongbong.api.helper.enums;
 
+import com.luban.common.base.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,19 +9,26 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * @author HP 2022/12/30
+ * @author hp
  */
 @Getter
 @AllArgsConstructor
-public enum XbbFormConditionSymbol {
-
-    eq("equal"),
-    in("in"),
-    like("like"),
+public enum XbbFormConditionSymbol implements BaseEnum<XbbFormConditionSymbol, String> {
+    /***/
+    eq("equal", "等于"),
+    in("in", "包括"),
+    like("like", "相似"),
     ;
-    private String code;
+    private final String code;
+    private final String name;
 
     public static Optional<XbbFormConditionSymbol> of(String code) {
-        return Arrays.stream(values()).filter(i -> Objects.equals(code, i.getCode())).findFirst();
+        return Optional.ofNullable(BaseEnum.parseByCode(XbbFormConditionSymbol.class, code));
+    }
+
+    public static Optional<XbbFormConditionSymbol> ofName(String name) {
+        return Arrays.stream(values())
+                .filter(i -> Objects.equals(name, i.getName()))
+                .findFirst();
     }
 }

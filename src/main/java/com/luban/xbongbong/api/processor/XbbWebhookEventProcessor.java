@@ -1,6 +1,6 @@
 package com.luban.xbongbong.api.processor;
 
-import com.luban.xbongbong.api.model.WebhookPayload;
+import com.luban.xbongbong.api.model.XbbWebhookPayload;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -23,7 +23,7 @@ public interface XbbWebhookEventProcessor {
      *
      * @return process method.
      */
-    Consumer<WebhookPayload> process();
+    Consumer<XbbWebhookPayload> process();
 
     /**
      * Whether the implementation of this interface supports
@@ -31,5 +31,5 @@ public interface XbbWebhookEventProcessor {
      *
      * @return boolean operation.
      */
-    Predicate<WebhookPayload> proceed();
+    Predicate<XbbWebhookPayload> proceed();
 }

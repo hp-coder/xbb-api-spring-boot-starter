@@ -15,7 +15,6 @@ import java.util.Optional;
 @Getter
 public enum XbbCustomerSource {
     /***/
-
     SEO("1", "网络推广"),
     TELESALES("2", "电话销售"),
     CLIENT_("3", "客户转介"),

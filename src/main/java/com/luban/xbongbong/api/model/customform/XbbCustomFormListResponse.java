@@ -1,6 +1,6 @@
 package com.luban.xbongbong.api.model.customform;
 
-import com.luban.xbongbong.api.model.Response;
+import com.luban.common.base.model.Response;
 import com.luban.xbongbong.api.model.common.list.XbbListItemModel;
 import lombok.Data;
 
