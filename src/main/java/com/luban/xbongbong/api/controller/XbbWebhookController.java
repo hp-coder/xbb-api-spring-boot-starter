@@ -2,7 +2,7 @@ package com.luban.xbongbong.api.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.luban.xbongbong.api.helper.config.XbbConfiguration;
+import com.luban.xbongbong.api.XbbProperties;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.XbbWebhookPayload;
 import com.luban.xbongbong.api.processor.XbbWebhookEventProcessor;
@@ -37,7 +37,7 @@ public class XbbWebhookController {
     @PostMapping("/event/listener")
     public void listener(
                          @RequestBody Map<String, Object> originalPayload,
-                         @RequestHeader(name = XbbConfiguration.REQUEST_HEADER_SIGN) String sign
+                         @RequestHeader(name = XbbProperties.REQUEST_HEADER_SIGN) String sign
     ) {
         final String originalJson = JSONObject.toJSONString(originalPayload);
         log.info("Xbb Webhook Request Original Payload : {}", originalJson);
@@ -45,7 +45,7 @@ public class XbbWebhookController {
         log.info("Xbb Webhook Request Converted Payload : {}", payload.toString());
         log.debug("Xbb Webhook Request Sign : {}", sign);
         Assert.isTrue(
-                Objects.equals(XbbConfiguration.getDataSign(payload.toString(), XbbConfiguration.WEBHOOK_TOKEN), sign),
+                Objects.equals(XbbProperties.getDataSign(payload.toString(), XbbProperties.WEBHOOK_TOKEN), sign),
                 () -> {
                     throw new XbbException(-1, "验签失败，非法请求");
                 }

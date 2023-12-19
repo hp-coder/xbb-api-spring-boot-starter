@@ -7,9 +7,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.Feature;
 import com.google.common.base.Preconditions;
-import com.luban.xbongbong.api.XbbApiAutoConfiguration;
+import com.luban.xbongbong.api.XbbProperties;
 import com.luban.xbongbong.api.helper.XbbUrl;
-import com.luban.xbongbong.api.helper.config.XbbConfiguration;
 import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import com.luban.xbongbong.api.helper.exception.XbbException;
 import com.luban.xbongbong.api.model.XbbResponse;
@@ -32,7 +31,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static com.luban.xbongbong.api.helper.config.XbbConfiguration.TOKEN;
+import static com.luban.xbongbong.api.XbbProperties.TOKEN;
 
 /**
  * @author hp
@@ -40,7 +39,6 @@ import static com.luban.xbongbong.api.helper.config.XbbConfiguration.TOKEN;
 @Slf4j
 @Component
 public class XbbApiCaller implements SmartInitializingSingleton {
-    private static final int MAX_TIMEOUT = 200;
     private static RestTemplate restTemplate;
 
     public static XbbDetailModel get(@NonNull Long dataId, @NonNull XbbUrl url) {
@@ -53,7 +51,7 @@ public class XbbApiCaller implements SmartInitializingSingleton {
     public static <E> XbbResponse<E> call(XbbUrl url, JSONObject data) throws XbbException {
         log.debug("Xbb API Request Payload: {}", data.toJSONString());
         try {
-            final XbbApiRequest request = new XbbApiRequest(url, data, XbbConfiguration.MAX_RETRY);
+            final XbbApiRequest request = new XbbApiRequest(url, data, XbbProperties.MAX_RETRY);
             final XbbResponse<E> response = call(request);
             if (response.succeed()) {
                 return response;
@@ -67,7 +65,7 @@ public class XbbApiCaller implements SmartInitializingSingleton {
     }
 
     private static <E> XbbResponse<E> call(XbbApiRequest request) throws XbbException, IllegalArgumentException {
-        if (XbbConfiguration.ENABLE_REQUEST_CONTROL && !proceed(request.getUrl().getType()) && request.retryable()) {
+        if (XbbProperties.ENABLE_REQUEST_CONTROL && !proceed(request.getUrl().getType()) && request.retryable()) {
             log.warn("销帮帮API{}请求重试{}次", request.getRequestUrl(), request.getRetry());
             try {
                 Thread.sleep(300);
@@ -77,15 +75,15 @@ public class XbbApiCaller implements SmartInitializingSingleton {
             }
         }
         final JSONObject data = request.getData();
-        data.put("corpid", XbbConfiguration.CORP_ID);
-        if (StrUtil.isNotEmpty(XbbConfiguration.USER_ID)) {
-            data.put("userId", XbbConfiguration.USER_ID);
+        data.put("corpid", XbbProperties.CORP_ID);
+        if (StrUtil.isNotEmpty(XbbProperties.USER_ID)) {
+            data.put("userId", XbbProperties.USER_ID);
         }
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
-        headers.set("sign", XbbConfiguration.getDataSign(data, TOKEN));
+        headers.set("sign", XbbProperties.getDataSign(data, TOKEN));
 
         String response;
         if (log.isDebugEnabled()) {
@@ -111,29 +109,27 @@ public class XbbApiCaller implements SmartInitializingSingleton {
         synchronized (XbbApiCaller.class) {
             final ApiType localType = apiType == null ? ApiType.READ : apiType;
             final RedissonClient redissonClient = SpringUtil.getBean(RedissonClient.class);
-            final RRateLimiter requestPerDayLimiter = redissonClient.getRateLimiter(XbbApiAutoConfiguration.REQUEST_PER_DAY_LIMITER);
-            final RRateLimiter requestPerMinuteLimiter = redissonClient.getRateLimiter(XbbApiAutoConfiguration.REQUEST_PER_MINUTE_LIMITER);
-            final RRateLimiter writePerSecondLimiter = redissonClient.getRateLimiter(XbbApiAutoConfiguration.WRITE_PER_SECOND_LIMITER);
+            final RRateLimiter requestPerDayLimiter = redissonClient.getRateLimiter(XbbProperties.REQUEST_PER_DAY_LIMITER);
+            final RRateLimiter requestPerMinuteLimiter = redissonClient.getRateLimiter(XbbProperties.REQUEST_PER_MINUTE_LIMITER);
+            final RRateLimiter writePerSecondLimiter = redissonClient.getRateLimiter(XbbProperties.WRITE_PER_SECOND_LIMITER);
             if (requestPerDayLimiter == null || requestPerMinuteLimiter == null || writePerSecondLimiter == null) {
                 return true;
             }
-            final boolean read = localType.equals(ApiType.READ);
-            final boolean write = localType.equals(ApiType.WRITE);
-            if (read) {
-                Assert.isTrue(requestPerDayLimiter.tryAcquire(MAX_TIMEOUT, TimeUnit.MILLISECONDS), "read:尝试获取每日请求数量失败, daily限流未获取到ticket, 当日应终止调用");
-                if (!requestPerMinuteLimiter.tryAcquire(MAX_TIMEOUT, TimeUnit.MILLISECONDS)) {
+            if (localType.equals(ApiType.READ)) {
+                Assert.isTrue(requestPerDayLimiter.tryAcquire(XbbProperties.MAX_TIMEOUT, TimeUnit.MILLISECONDS), "read:尝试获取每日请求数量失败, daily限流未获取到ticket, 当日应终止调用");
+                if (!requestPerMinuteLimiter.tryAcquire(XbbProperties.MAX_TIMEOUT, TimeUnit.MILLISECONDS)) {
                     log.error("write:尝试获取请求数量失败, per-minute限流未获取到ticket, 递归重试");
                     return false;
                 }
                 return true;
             }
-            if (write) {
-                Assert.isTrue(requestPerDayLimiter.tryAcquire(MAX_TIMEOUT, TimeUnit.MILLISECONDS), "write:尝试获取每日请求数量失败, daily限流未获取到ticket, 当日应终止调用");
-                if (!requestPerMinuteLimiter.tryAcquire(MAX_TIMEOUT, TimeUnit.MILLISECONDS)) {
+            if (localType.equals(ApiType.WRITE)) {
+                Assert.isTrue(requestPerDayLimiter.tryAcquire(XbbProperties.MAX_TIMEOUT, TimeUnit.MILLISECONDS), "write:尝试获取每日请求数量失败, daily限流未获取到ticket, 当日应终止调用");
+                if (!requestPerMinuteLimiter.tryAcquire(XbbProperties.MAX_TIMEOUT, TimeUnit.MILLISECONDS)) {
                     log.error("write:尝试获取请求数量失败, per-minute限流未获取到ticket, 递归重试");
                     return false;
                 }
-                if (!writePerSecondLimiter.tryAcquire(MAX_TIMEOUT, TimeUnit.MILLISECONDS)) {
+                if (!writePerSecondLimiter.tryAcquire(XbbProperties.MAX_TIMEOUT, TimeUnit.MILLISECONDS)) {
                     log.error("write:尝试获取请求数量失败, per-second限流未获取到ticket, 递归重试");
                     return false;
                 }

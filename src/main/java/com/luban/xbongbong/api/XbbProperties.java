@@ -1,4 +1,4 @@
-package com.luban.xbongbong.api.helper.config;
+package com.luban.xbongbong.api;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -25,7 +25,7 @@ import java.util.Optional;
 @Data
 @ConfigurationProperties(prefix = "xbb")
 @Component
-public class XbbConfiguration implements SmartInitializingSingleton {
+public class XbbProperties implements SmartInitializingSingleton {
     /**
      * API网关, 钉钉版默认: <a href="https://proapi.xbongbong.com">https://proapi.xbongbong.com</a>
      */
@@ -74,17 +74,17 @@ public class XbbConfiguration implements SmartInitializingSingleton {
     /**
      * API每日最大调用次数, 最大 10w/d
      */
-    private Integer requestPerDay = 100_000;
+    private Integer requestPerDay = MAX_TOTAL_REQUEST_PER_DAY;
 
     /**
      * API每分钟最大调用次数, 最大 1000/m
      */
-    private Integer requestPerMinute = 1_000;
+    private Integer requestPerMinute = MAX_TOTAL_REQUEST_PER_MINUTE;
 
     /**
      * 写接口的每秒最大调用次数, 最大 3/s
      */
-    private Integer writePerSecond = 3;
+    private Integer writePerSecond = MAX_WRITE_REQUEST_PER_SECOND;
 
     /**
      * 因限流未获取到ticket后重试次数, 默认3次
@@ -129,19 +129,25 @@ public class XbbConfiguration implements SmartInitializingSingleton {
 
     public static final String REQUEST_PER_DAY_LIMITER = "xbb-api-request-per-day-limiter";
 
-    public static final String REDIS_REQUEST_PER_DAY = "xbb_api_request_per_day:count";
+    private static final String LIMITER_KEY_PATTERN = "{%s}:value";
 
-    public static final String REDIS_REQUEST_PER_MINUTE = "xbb_api_request_per_minute:count";
+    public static final int MAX_TIMEOUT = 200;
 
-    public static final String REDIS_WRITE_PER_SECOND = "xbb_api_write_per_second:count";
+    public static final Integer MAX_TOTAL_REQUEST_PER_DAY = 100_000;
 
-    public static final Integer MAX_TOTAL_REQUEST_PER_DAY = 100000;
-
-    public static final Integer MAX_TOTAL_REQUEST_PER_MINUTE = 1000;
+    public static final Integer MAX_TOTAL_REQUEST_PER_MINUTE = 1_000;
 
     public static final Integer MAX_WRITE_REQUEST_PER_SECOND = 3;
 
     public static final String REQUEST_HEADER_SIGN = "sign";
+
+    /**
+     * 获取redisson定义的Rate limiter的key名称
+     */
+    public static String getRateLimiterInstanceKey(String rateLimiterName) {
+        Preconditions.checkArgument(StrUtil.isNotEmpty(rateLimiterName));
+        return String.format(LIMITER_KEY_PATTERN, rateLimiterName);
+    }
 
     /**
      * 获取签名

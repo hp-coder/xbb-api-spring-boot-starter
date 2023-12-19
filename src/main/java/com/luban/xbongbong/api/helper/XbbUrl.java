@@ -2,7 +2,7 @@ package com.luban.xbongbong.api.helper;
 
 import com.google.common.base.Preconditions;
 import com.luban.common.base.annotations.FieldDesc;
-import com.luban.xbongbong.api.helper.config.XbbConfiguration;
+import com.luban.xbongbong.api.XbbProperties;
 import com.luban.xbongbong.api.helper.enums.api.ApiType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public interface XbbUrl {
     ApiType getType();
 
     default String getRequestUrl() {
-        final String apiGateway = XbbConfiguration.API_GATEWAY;
+        final String apiGateway = XbbProperties.API_GATEWAY;
         Preconditions.checkArgument(Objects.nonNull(apiGateway));
         return apiGateway + getUri();
     }

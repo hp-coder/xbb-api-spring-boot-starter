@@ -19,13 +19,13 @@ mvn clean install
 <dependency>
     <groupId>com.luban</groupId>
     <artifactId>xbb-api-spring-boot-starter</artifactId>
-    <version>1.0.0-sp2-SNAPSHOT</version>
+    <version>1.0.2-sp2-SNAPSHOT</version>
 </dependency>
 ```
 ### Springboot配置
 详情参考配置类说明: 
 - 系统配置
-`com.luban.xbongbong.api.helper.config.XbbConfiguration`
+`com.luban.xbongbong.api.XbbProperties`
 - 业务配置
 `com.luban.xbongbong.api.biz.config.XbbBizConfig`
 
