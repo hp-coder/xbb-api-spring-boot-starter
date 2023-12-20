@@ -52,7 +52,7 @@ public class XbbProperties implements SmartInitializingSingleton {
     private String corpId;
 
     /**
-     * 操作API的用户id(不必须)[钉钉版为钉钉用户userId]
+     * 操作API的用户id(必须)[钉钉版为钉钉用户userId]
      */
     private String userId;
 
