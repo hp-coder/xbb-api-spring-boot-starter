@@ -3,7 +3,7 @@ package com.luban.xbongbong.api.helper.exception;
 import com.google.common.base.Preconditions;
 import com.luban.xbongbong.api.helper.XbbUrl;
 import com.luban.xbongbong.api.model.XbbResponse;
-import com.luban.xbongbong.api.model.ratelimiter.XbbApiRequest;
+import com.luban.xbongbong.api.ratelimiter.XbbApiRequest;
 import lombok.Getter;
 
 import java.util.Objects;

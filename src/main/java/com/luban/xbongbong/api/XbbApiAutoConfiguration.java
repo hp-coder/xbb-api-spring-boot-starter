@@ -1,6 +1,8 @@
 package com.luban.xbongbong.api;
 
 import cn.hutool.extra.spring.EnableSpringUtil;
+import com.luban.xbongbong.api.ratelimiter.RedissonBasedXbbRateLimiter;
+import com.luban.xbongbong.api.ratelimiter.XbbRateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RRateLimiter;
@@ -8,6 +10,7 @@ import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.SmartInitializingSingleton;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +39,12 @@ public class XbbApiAutoConfiguration implements SmartInitializingSingleton {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public XbbRateLimiter xbbRateLimiter(RedissonClient redissonClient){
+        return new RedissonBasedXbbRateLimiter(redissonClient);
     }
 
     @Override

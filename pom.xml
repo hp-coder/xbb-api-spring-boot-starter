@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>xbb-api-spring-boot-starter</artifactId>
-    <version>1.0.2-sp2-SNAPSHOT</version>
+    <version>1.0.3-sp2-SNAPSHOT</version>
 
     <properties>
         <redisson-spring-boot-starter.version>3.12.5</redisson-spring-boot-starter.version>

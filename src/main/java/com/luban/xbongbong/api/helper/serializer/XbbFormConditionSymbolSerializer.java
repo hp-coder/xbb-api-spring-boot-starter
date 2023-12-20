@@ -2,7 +2,6 @@ package com.luban.xbongbong.api.helper.serializer;
 
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.ObjectSerializer;
-import com.luban.xbongbong.api.helper.enums.XbbFormBizType;
 import com.luban.xbongbong.api.helper.enums.XbbFormConditionSymbol;
 
 import java.io.IOException;

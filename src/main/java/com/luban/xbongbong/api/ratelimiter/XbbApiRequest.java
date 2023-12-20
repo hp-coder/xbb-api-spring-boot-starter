@@ -1,4 +1,4 @@
-package com.luban.xbongbong.api.model.ratelimiter;
+package com.luban.xbongbong.api.ratelimiter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
