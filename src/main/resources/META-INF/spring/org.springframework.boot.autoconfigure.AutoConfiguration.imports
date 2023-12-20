@@ -1,2 +1,2 @@
-com.luban.xbongbong.api.XbbApiAutoConfiguration
-com.luban.xbongbong.api.controller.XbbWebhookController
+com.hp.xbongbong.api.XbbApiAutoConfiguration
+com.hp.xbongbong.api.controller.XbbWebhookController

@@ -1,6 +1,8 @@
 # xbb-api-spring-boot-starter
 
-销帮帮CRM系统API及业务API: [销帮帮接口文档](http://profapi.xbongbong.com/#/apilist/181)
+易用性封装
+
+销帮帮CRM系统API: [销帮帮接口文档](http://profapi.xbongbong.com/#/apilist/181)
 
 ## Note
 1. 由于销帮帮的关联表单并非通过关联键查询子表单数据，而是通过主键（销帮帮客户记录ID）关联，也就是说主表的记录只能是1，子表是多，无法实现多对多的场景`
@@ -26,7 +28,7 @@ mvn clean install
 ### SpringBoot
 详情参考配置类说明: 
 - 系统配置
-[XbbProperties.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2FXbbProperties.java)
+[XbbProperties.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2FXbbProperties.java)
 
 配置文件添加
 ```yaml
@@ -47,24 +49,24 @@ xbb:
 ```
 ### Default
 
-固定使用 [XbbWebhookController.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fcontroller%2FXbbWebhookController.java)
-作为webhook回调入口. 自定义实现 [XbbWebhookEventProcessor.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fprocessor%2FXbbWebhookEventProcessor.java) 完成对事件的处理.
+固定使用 [XbbWebhookController.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fcontroller%2FXbbWebhookController.java)
+作为webhook回调入口. 自定义实现 [XbbWebhookEventProcessor.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fprocessor%2FXbbWebhookEventProcessor.java) 完成对事件的处理.
 
-[RedissonBasedXbbRateLimiter.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fratelimiter%2FRedissonBasedXbbRateLimiter.java)
-作为默认限流器, 可自定义实现 [XbbRateLimiter.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fratelimiter%2FXbbRateLimiter.java) 扩展
+[RedissonBasedXbbRateLimiter.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fratelimiter%2FRedissonBasedXbbRateLimiter.java)
+作为默认限流器, 可自定义实现 [XbbRateLimiter.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fratelimiter%2FXbbRateLimiter.java) 扩展
 
 ### SDK
 
-URL配置 [XbbUrl.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fhelper%2FXbbUrl.java)
+URL配置 [XbbUrl.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fhelper%2FXbbUrl.java)
 
 销帮帮API的封装
-- 合同订单 [XbbContractApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fcontract%2FXbbContractApi.java)
-- 自定义表单 [XbbCustomFormApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fcustomform%2FXbbCustomFormApi.java)
-- 标签 [XbbLabelApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Flabel%2FXbbLabelApi.java)
-- 回款单 [XbbPaymentSheetApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fpaymentsheet%2FXbbPaymentSheetApi.java)
-- CRM客户 [XbbCustomerApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fcustomer%2FXbbCustomerApi.java)
-- 系统表单 [XbbFormApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fform%2FXbbFormApi.java)
-- 系统用户 [XbbUserApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fuser%2FXbbUserApi.java)
+- 合同订单 [XbbContractApi.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fservice%2Fcontract%2FXbbContractApi.java)
+- 自定义表单 [XbbCustomFormApi.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fservice%2Fcustomform%2FXbbCustomFormApi.java)
+- 标签 [XbbLabelApi.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fservice%2Flabel%2FXbbLabelApi.java)
+- 回款单 [XbbPaymentSheetApi.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fservice%2Fpaymentsheet%2FXbbPaymentSheetApi.java)
+- CRM客户 [XbbCustomerApi.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fservice%2Fcustomer%2FXbbCustomerApi.java)
+- 系统表单 [XbbFormApi.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fservice%2Fform%2FXbbFormApi.java)
+- 系统用户 [XbbUserApi.java](src%2Fmain%2Fjava%2Fcom%2Fhp%2Fxbongbong%2Fapi%2Fservice%2Fuser%2FXbbUserApi.java)
 
 *注意：需要考虑尽量减少总的销帮帮API调用次数，所有接口指所有到达API的请求，即使被频次限制拦截的请求，同样会计算在所有接口频次限制中。*
 
