@@ -1,75 +1,73 @@
 # xbb-api-spring-boot-starter
 
-销帮帮CRM系统API及业务API
+销帮帮CRM系统API及业务API: [销帮帮接口文档](http://profapi.xbongbong.com/#/apilist/181)
 
-## 说明
-1. 由于销帮帮的关联表单并非通过关联键查询子表单数据，而是通过主键（销帮帮客户记录ID）关联，也就是说主表的记录只能是1，字表是多，无法实现多对多的场景`
-2. **经销帮帮开发反馈, 带审核业务的模块, 其记录在审核通过后可以通过接口查询到, webhook事件回调机制也是一样, 在审核通过后能收到对应模块的事件通知.**
-   1. 然而他们的垃圾文档又不写这些东西
+## Note
+1. 由于销帮帮的关联表单并非通过关联键查询子表单数据，而是通过主键（销帮帮客户记录ID）关联，也就是说主表的记录只能是1，子表是多，无法实现多对多的场景`
+2. *经销帮帮开发反馈, 带审核业务的模块, 其记录在审核通过后可以通过接口查询到, webhook事件回调机制也是一样, 在审核通过后能收到对应模块的事件通知.*
+   1. 2023-12之前他们的webhook回调机制都存在重复发送“创建”事件的问题, 即使第一次“创建”事件已经正确响应了.
 
-## 使用
-获取项目并安装
+## Usage
+
+### Install
 ```shell
-git clone http://47.106.251.114:3000/hup/xbb-api-spring-boot-starter
+git clone [repository]
 cd xbb-api-spring-boot-starter
 mvn clean install
 ```
 引入Maven坐标
 ```xml
 <dependency>
-    <groupId>com.luban</groupId>
+    <groupId>[groupId]</groupId>
     <artifactId>xbb-api-spring-boot-starter</artifactId>
-    <version>1.0.2-sp2-SNAPSHOT</version>
+    <version>1.0.3-sp2-SNAPSHOT</version>
 </dependency>
 ```
-### Springboot配置
+### SpringBoot
 详情参考配置类说明: 
 - 系统配置
-`com.luban.xbongbong.api.XbbProperties`
-- 业务配置
-`com.luban.xbongbong.api.biz.config.XbbBizConfig`
+[XbbProperties.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2FXbbProperties.java)
 
 配置文件添加
 ```yaml
 xbb:
-  gateway: https://proapi.xbongbong.com
-  corp-id: ding81a031835ed7c67e35c2f4657eb6378f
-  user-id: 28361647261063310
-  token: ce42190bbfda01eafe6fadb2f83895cf
-  webhook-token: 9c106a50fb6ee47331f4d97288ccfe51
-  enable-request-control: true
-  request-per-day: 50000
-  request-per-minute: 500
-  write-per-second: 2
-  biz:
-    open-bid-form-name: "开标记录"
-    bid-winning-name: "中标记录"
-    customer-form-corp-id-field-name: "text_23"
-    customer-form-id: 7174754
+  gateway: # 默认 https://proapi.xbongbong.com 
+  api-prefix: # 默认 pro
+  api-version: # 默认 v2
+  api-suffix: # 默认 api
+  corp-id: # 必须
+  user-id: # 必须
+  token: # 必须
+  webhook-token: # 必须
+  enable-request-control: # true/false 是否开启客户端限流
+  request-per-day: # 每日调用次数上限
+  request-per-minute: # 每分调用次数上限
+  write-per-second: # 每秒写接口调用次数上限
+  max-retry: # 因限流未获取到ticket后重试次数
 ```
+### Default
+
+固定使用 [XbbWebhookController.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fcontroller%2FXbbWebhookController.java)
+作为webhook回调入口. 自定义实现 [XbbWebhookEventProcessor.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fprocessor%2FXbbWebhookEventProcessor.java) 完成对事件的处理.
+
+[RedissonBasedXbbRateLimiter.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fratelimiter%2FRedissonBasedXbbRateLimiter.java)
+作为默认限流器, 可自定义实现 [XbbRateLimiter.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fratelimiter%2FXbbRateLimiter.java) 扩展
+
 ### SDK
+
+URL配置 [XbbUrl.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fhelper%2FXbbUrl.java)
+
 销帮帮API的封装
-- 自定义表单
-- CRM客户
-- 系统表单
-- 系统用户 
-
-详细参考：[销帮帮接口文档](http://profapi.xbongbong.com/#/apilist/181)
-### BIZ API
-系统业务API
-
-接口：`com.luban.xbongbong.api.biz.XbbLubanBizApi`
-- 通过qyId获取销帮帮客户id
-- 添加一条开标记录
-- 添加一条中标记录 
-
-#### 同步调用逻辑
-1. 通过乐标cms接口获取乐标用户分配的企业id集合:`ip:port/xbb/api/qyIds?random={Long}`
-2. 通过本模块的`com.luban.xbongbong.api.biz.XbbLubanBizApi.getCustomerIdsByQyIds`获取企业id与销帮帮客户id的对应关系
-3. 根据qyId获取对应业绩等外部数据，通过qyId对应的客户id列表，构建对应每个客户id的数据对象
-4. 通过本模块的`com.luban.xbongbong.api.biz.XbbLubanBizApi.addOpenBid`或`com.luban.xbongbong.api.biz.XbbLubanBizApi.addBidWinning`添加对应数据
+- 合同订单 [XbbContractApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fcontract%2FXbbContractApi.java)
+- 自定义表单 [XbbCustomFormApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fcustomform%2FXbbCustomFormApi.java)
+- 标签 [XbbLabelApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Flabel%2FXbbLabelApi.java)
+- 回款单 [XbbPaymentSheetApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fpaymentsheet%2FXbbPaymentSheetApi.java)
+- CRM客户 [XbbCustomerApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fcustomer%2FXbbCustomerApi.java)
+- 系统表单 [XbbFormApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fform%2FXbbFormApi.java)
+- 系统用户 [XbbUserApi.java](src%2Fmain%2Fjava%2Fcom%2Fluban%2Fxbongbong%2Fapi%2Fservice%2Fuser%2FXbbUserApi.java)
 
 *注意：需要考虑尽量减少总的销帮帮API调用次数，所有接口指所有到达API的请求，即使被频次限制拦截的请求，同样会计算在所有接口频次限制中。*
+
 - 写接口：3次/秒
 - 所有接口：1000次/分钟
 - 所有接口：100000(十万)次/天

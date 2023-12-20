@@ -189,7 +189,7 @@ public class XbbProperties implements SmartInitializingSingleton {
         Preconditions.checkArgument(StrUtil.isNotEmpty(apiSuffix));
         Preconditions.checkArgument(StrUtil.isNotEmpty(corpId));
         Preconditions.checkArgument(StrUtil.isNotEmpty(token));
-        Preconditions.checkArgument(StrUtil.isNotEmpty(token));
+        Preconditions.checkArgument(StrUtil.isNotEmpty(webhookToken));
 
         API_GATEWAY = gateway + StrUtil.SLASH + apiPrefix + StrUtil.SLASH + apiVersion + StrUtil.SLASH + apiSuffix;
         CORP_ID = corpId;
